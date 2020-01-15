@@ -50,7 +50,6 @@ class DNN(nn.Module):
         self.to(self.device)
 
 
-
     def forward(self, observation):
         x = torch.Tensor(observation).to(self.device)
 
@@ -68,15 +67,12 @@ class DNN(nn.Module):
         
 
 
-def main():
-     string = 'me'
-     if string is 'me':
-         print(True)
+
      
      
 if __name__ == "__main__":
     # execute only if run as a script
-    main()
+    pass
    
     
     
