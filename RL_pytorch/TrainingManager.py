@@ -82,10 +82,9 @@ class TrainingManager:
                 # call step function in the environement
                 state, reward, done, others = self.env.setp(action)
                 episode_reward += reward
-                # call step function in the agent. Although the agent does not actually has a step function,
-                # but this helps us to have a special handeling of the step function according to the agent's algorithm.
-                # In addition, this loop stays simple and generic as it should be.
-                self.agent.step(step, state, reward, done, others)
+
+                # Call learn function in the agent. To learn for the last experience
+                self.agent.learn(step, state, reward, done, others)
                 action = self.agent.get_action(state)
 
             rewards.append(episode_reward)

@@ -11,18 +11,30 @@ __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
-from abc import ABC
+#from abc import ABC
+from utl.ReplayMemory import ReplayMemory
+from DNN import DNN 
 
 class AbstractAgent():
-    def __init__(self, actor=None, critic=None, replay_memory=None, state_shape=None, action_shape=None ):
+    def __init__(self,
+                 actor:DNN, 
+                 critic:DNN, 
+                 replay_memory:ReplayMemory, 
+                 state_shape=None, 
+                 action_shape=None,
+                 mini_batch_size=64):
         self.actor = actor
         self.critic = critic
         self.replay_memory = replay_memory
         self.state_shape = state_shape
         self.action_shape = action_shape
+        self.mini_batch_size = mini_batch_size
 
     def validate(self):
-        raise NotImplementedError
+        return True
+            # TO BE FINISHED LATER
+            #assert self.state_shape is not None, 'state shape can not be None'
+            #assert self.state_shape < 1
     
     def train(self):
         raise NotImplementedError
