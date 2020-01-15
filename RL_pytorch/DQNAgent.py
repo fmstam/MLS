@@ -21,7 +21,7 @@ class DQNAgent(AbstractAgent):
                  delta_epsilon=0,
                  replay_memory=None):
 
-        AbstractAgent.__init__(self, critic=critic, replay_memory=replay_memory)
+        super(DQNAgent, self).__init__(critic=critic, replay_memory=replay_memory)
 
     def train(self):
         print('here goes the training')
