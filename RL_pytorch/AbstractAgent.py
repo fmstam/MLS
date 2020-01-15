@@ -20,11 +20,14 @@ class AbstractAgent():
         self.replay_memory = replay_memory
         self.state_shape = state_shape
         self.action_shape = action_shape
+
+    def validate(self):
+        raise NotImplementedError
     
     def train(self):
         raise NotImplementedError
 
-    def get_action(self):
+    def get_action(self, state):
         raise NotImplementedError
 
     def get_critic(self):

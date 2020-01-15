@@ -19,6 +19,9 @@ class AbstractEnvironement():
         self.state_shape = state_shape
         self.action_shape = action_shape
     
-    def step(self, state):
+    def step(self, action):
+        raise NotImplementedError
+
+    def reset(self):
         raise NotImplementedError
 
