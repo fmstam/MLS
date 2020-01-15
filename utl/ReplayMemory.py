@@ -11,7 +11,7 @@ __version__ = "1.0.1"
 __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
-
+  
 import numpy as np
 
 class ReplayMemory:
