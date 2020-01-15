@@ -36,7 +36,7 @@ class AbstractAgent():
             #assert self.state_shape is not None, 'state shape can not be None'
             #assert self.state_shape < 1
     
-    def train(self):
+    def learn(self, *args):
         raise NotImplementedError
 
     def get_action(self, state):

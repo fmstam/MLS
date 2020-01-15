@@ -42,8 +42,28 @@ class DQNAgent(AbstractAgent):
     def validate(self, parameter_list):
         super.validate()
 
-    def train(self):
-        print('here goes the training')
+    def learn(self, *args):
+        """ The actual algorithm of DQN goes here
+        
+        Keyword arguments:
+        *arg -- an experience sequence sent from the episode manageer. It should be unpacked to with this order: 
+            step: the step in the episode
+            state: the current state 
+            state_: next state
+            reward: the reward 
+            done: if it was a terminal state
+            extras: any application dependant observations, usually it is None and is ignored
+        """
+
+        # unpack args
+        step, state, state_, reward, done, _ = args 
+
+        # 1- store the experience into the memory
+        self.replay_memory.reward(state, state_, reward, done)
+
+        # 2- sample random 
+        
+        
     
 
 

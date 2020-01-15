@@ -30,16 +30,23 @@ class ReplayMemory:
 
 
     def remember(self, state, state_, reward, action):
-        ''' 
-            it is a cyclic memory, therefore we use an index that continues cycling.
-        '''
+        """ Remeber an experience. 
+            The memory is cyclic, therefore we use an index that continues cycling.
+        
+        Keyword arguments:
+        state -- current state
+        state_ -- next state
+        reward -- obtained reward
+        action -- action
+        """
+
+        # store them
         self.state[self.next_index] = state
         self.action[self.next_index] = action
         self.reward[self.next_index] = reward
         self.state_[self.next_index] = state_
         
         # move to the next index
-        
         self.index = (self.next_index + 1) % self.size 
         
 

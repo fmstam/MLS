@@ -80,11 +80,14 @@ class TrainingManager:
             episode_reward = 0
             while not done:
                 # call step function in the environement
-                state, reward, done, others = self.env.setp(action)
+                state_, reward, done, extras = self.env.setp(action)
                 episode_reward += reward
 
                 # Call learn function in the agent. To learn for the last experience
-                self.agent.learn(step, state, reward, done, others)
+                self.agent.learn(step, state, state_, reward, done, extras)
+
+                # next state-action pair
+                state = state_
                 action = self.agent.get_action(state)
 
             rewards.append(episode_reward)
