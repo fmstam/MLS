@@ -89,17 +89,3 @@ class TrainingManager:
 
             rewards.append(episode_reward)
             average_reward = sum(rewards)/self.average_reward_steps
-
-
-            
-
-
-
-
-
-
-        
-
-
-
-

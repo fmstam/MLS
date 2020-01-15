@@ -26,7 +26,12 @@ class DNN(nn.Module):
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
-        self.device = device
+
+        self.device = 'cpu' # default is the cpu
+        if device is 'gpu':
+            if torch.cuda.is_available():
+                self.device = 'cuda:0'
+            
         
         # implement the actual neural network
         # first layer
@@ -36,11 +41,15 @@ class DNN(nn.Module):
             self.layers.append(nn.Linear(hidden_layers_sizes[i-1], hidden_layers_sizes[i]))
         # last layer
         self.layers.append(nn.Linear(hidden_layers_sizes[-1], output_shape))
-        self.to(self.device)
 
         # optimizer and loss
         self.optimizer = optim.Adam(self.parameters(), lr=rl)
         self.loss = nn.MSELoss(reduction='sum')
+
+        # put the model in the self.device
+        self.to(self.device)
+
+
 
     def forward(self, observation):
         x = torch.Tensor(observation).to(self.device)
@@ -60,8 +69,10 @@ class DNN(nn.Module):
 
 
 def main():
-     dnn = DNN(4, 4, [32, 16])
-     dnn.train()
+     string = 'me'
+     if string is 'me':
+         print(True)
+     
      
 if __name__ == "__main__":
     # execute only if run as a script

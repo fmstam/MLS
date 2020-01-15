@@ -47,5 +47,3 @@ class AbstractAgent():
 
     def get_actor(self):
         raise NotImplementedError
-
-
