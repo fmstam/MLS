@@ -20,8 +20,9 @@ import torch.optim as optim
 import numpy as np
 
 class DNN(nn.Module):
-    def __init__(self, input_shape, output_shape, hidden_layers_sizes=[16], device='cpu', rl=1e-4):
+    def __init__(self, input_shape, output_shape, hidden_layers_sizes=[16, 16], device='cpu', rl=1e-4):
         
+        super(DNN, self).__init__()
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
@@ -29,12 +30,12 @@ class DNN(nn.Module):
         
         # implement the actual neural network
         # first layer
-        self.layers = nn.ModuleList([nn.Linear(*input_shape, hidden_layers_sizes[0])]) 
+        self.layers = nn.ModuleList([nn.Linear(input_shape, hidden_layers_sizes[0])]) 
         # loop over the network depth
-        for i in range(1, len(hidden_layers_sizes-1)): 
-            self.layers.append([nn.Linear(hidden_layers_sizes[i-1], hidden_layers_sizes[i])])
+        for i in range(1, len(hidden_layers_sizes)): 
+            self.layers.append(nn.Linear(hidden_layers_sizes[i-1], hidden_layers_sizes[i]))
         # last layer
-        self.layers.append([nn.Linear(hidden_layers_sizes[-1], output_shape)])
+        self.layers.append(nn.Linear(hidden_layers_sizes[-1], output_shape))
         self.to(self.device)
 
         # optimizer and loss
@@ -57,10 +58,15 @@ class DNN(nn.Module):
         print(self)
         
 
+
+def main():
+     dnn = DNN(4, 4, [32, 16])
+     
 if __name__ == "__main__":
     # execute only if run as a script
-    dnn = DNN(4, 4)
-    dnn.summary()
+    main()
+   
+    
     
 
         
