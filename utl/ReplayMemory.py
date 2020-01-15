@@ -57,5 +57,3 @@ class ReplayMemory:
         action = self.action[indices]
 
         return state, state_, reward, action
-
-

@@ -13,15 +13,19 @@ __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
 from AbstractAgent import AbstractAgent
+from AbstractEnvironment import AbstractEnvironement
+
+from collections import deque # to mantian the last k rewards
+
 class TrainingManager:
     def __init__(self,
                  num_episodes,
                  episode_length,
-                 agent,
-                 env,
+                 agent:AbstractAgent,
+                 env:AbstractEnvironement,
                  average_reward_steps=5,
                  device='cpu',
-                 logfile='training_log.txt')
+                 logfile='training_log.txt'):
 
         """TrainingManager initializer.
 
@@ -41,7 +45,7 @@ class TrainingManager:
         self.average_reward_steps = average_reward_steps
         self.device = device
 
-    def run(self, verbose=False, plot=False, parallel=False):
+    def run(self, verbose=False, plot=False, save_to_file=True, parallel=False):
         """ Run the RL scenario using the settings of the TrainingManager
         
         
@@ -53,13 +57,17 @@ class TrainingManager:
         
         # do some assertions first
         assert self.agent is not None, "Agent can not be None"
-        assert self.env is not None, "env can not be None"
-        assert self.average_reward_steps > 1, "Reward must be average on more than 1 episode"
+        assert self.env is not None, "Environment object can not be None"
+        assert self.average_reward_steps > 1, "Reward must be averaged on more than 1 episode"
         
         # validate the agent is ready for training
         assert self.agent.validate()
 
+        
         # do the magic here, i.e., the main training loop
+        rewards = deque(maxlen=self.average_reward_steps)
+        average_reward = 0
+
         for i in range(self.num_episodes): 
             # 1 and 2- reset the environement and get initial state
             state = self.env.reset()
@@ -69,15 +77,21 @@ class TrainingManager:
             # the episode ends 
             step = 0
             done = False
+            episode_reward = 0
             while not done:
                 # call step function in the environement
                 state, reward, done, others = self.env.setp(action)
+                episode_reward += reward
                 # call step function in the agent. Although the agent does not actually has a step function,
                 # but this helps us to have a special handeling of the step function according to the agent's algorithm.
                 # In addition, this loop stays simple and generic as it should be.
                 self.agent.step(step, state, reward, done, others)
                 action = self.agent.get_action(state)
-            
+
+            rewards.append(episode_reward)
+            average_reward = sum(rewards)/self.average_reward_steps
+
+
             
 
 

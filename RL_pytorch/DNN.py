@@ -61,6 +61,7 @@ class DNN(nn.Module):
 
 def main():
      dnn = DNN(4, 4, [32, 16])
+     dnn.train()
      
 if __name__ == "__main__":
     # execute only if run as a script
