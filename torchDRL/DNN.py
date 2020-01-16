@@ -19,10 +19,15 @@ import torch.optim as optim
 
 import numpy as np
 
-class DNN(nn.Module):
-    def __init__(self, input_shape, output_shape, hidden_layers_sizes=[16, 16], device='cpu', rl=1e-4):
+class torchDNN(nn.Module):
+    def __init__(self,
+                 input_shape, 
+                 output_shape, 
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4):
         
-        super(DNN, self).__init__()
+        super(torchDNN, self).__init__()
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
@@ -43,8 +48,8 @@ class DNN(nn.Module):
         self.layers.append(nn.Linear(hidden_layers_sizes[-1], output_shape))
 
         # optimizer and loss
-        self.optimizer = optim.Adam(self.parameters(), lr=rl)
-        self.loss = nn.MSELoss(reduction='sum')
+        self.optimizer = optim.Adam(self.parameters(), lr=lr)
+        self.loss_fun = nn.MSELoss(reduction='sum')
 
         # put the model in the self.device
         self.to(self.device)
@@ -61,9 +66,59 @@ class DNN(nn.Module):
         actions = self.layers[-1](x)
 
         return actions # actions
+    
 
     def summary(self):
         print(self)
+
+
+
+class DNN:
+    def __init__(self,
+                 input_shape, 
+                 output_shape, 
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4):
+        self.input_shape = input_shape
+        self.output_shape = output_shape
+        self.hidden_layers_sizes = hidden_layers_sizes
+        self.device = device
+        self.lr = lr
+
+        self.model = torchDNN(input_shape=self.input_shape,
+                             output_shape=self.output_shape, 
+                             hidden_layers_sizes=self.hidden_layers_sizes, 
+                             device=self.device,
+                             lr=self.lr)
+    def predict(self, source):
+        return self.model(source)
+
+    def fit(self, source, y, epochs=1):
+        y_pred = self.predict(source)
+        loss = self.model.loss_fun(y_pred, y)
+        self.model.optim.zero_grad()
+        loss.backward()
+        self.model.optim.step()
+
+    def copy_weights(self, dnn:DNN, smoothing=False, smoothing_factor=1e-3):
+        """ Copy weights from another DNN
+         
+        keyword arguments:
+        dnn -- another DNN must use the same lib, e.g., 
+        smoothing -- if true the the weights are updated with a smoothing  factor
+        smoothing_factor -- used if smoothing is true
+        """
+        if not smoothing:
+            self.model.load_state_dict(dnn.model.state_dict())
+        else:
+            for param1, param2 in zip(self.model.parameters(), dnn.model.parameters()):
+                param1.data.copy_(smoothing_factor * param1 + (1 - smoothing_factor) * param2)
+
+    
+
+        
+
         
 
 

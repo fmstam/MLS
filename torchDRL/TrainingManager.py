@@ -84,7 +84,7 @@ class TrainingManager:
                 episode_reward += reward
 
                 # Call learn function in the agent. To learn for the last experience
-                self.agent.learn(step, state, state_, reward, done, extras)
+                self.agent.learn(step, state, state_, reward, action, done, extras)
 
                 # next state-action pair
                 state = state_

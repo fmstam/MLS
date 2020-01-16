@@ -5,3 +5,5 @@ def foo(*arg):
 
 foo(1, 2, 3)
 
+print(9 // 10)
+

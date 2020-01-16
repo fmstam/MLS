@@ -20,21 +20,21 @@ class AbstractAgent():
                  actor:DNN, 
                  critic:DNN, 
                  replay_memory:ReplayMemory, 
-                 state_shape=None, 
-                 action_shape=None,
+                 state_size, 
+                 action_space,
                  mini_batch_size=64):
         self.actor = actor
         self.critic = critic
         self.replay_memory = replay_memory
-        self.state_shape = state_shape
-        self.action_shape = action_shape
+        self.state_size = state_size
+        self.action_space = action_space
         self.mini_batch_size = mini_batch_size
 
     def validate(self):
         return True
             # TO BE FINISHED LATER
-            #assert self.state_shape is not None, 'state shape can not be None'
-            #assert self.state_shape < 1
+            #assert self.state_size is not None, 'state shape can not be None'
+            #assert self.state_size < 1
     
     def learn(self, *args):
         raise NotImplementedError
