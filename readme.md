@@ -1,4 +1,4 @@
-# Deep reinforcement learning algorithms implementation
+# Deep reinforcement learning package in pytorch
 The neural networks are implemented in pytroch and the package contains a Training Manager and is designed such that it reduces the overhead in the agents classes.
 
 ## Implemented algorithms 
