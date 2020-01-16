@@ -14,10 +14,10 @@ __status__ = "Production"
  
 class AbstractEnvironement():
     def __init__(self,
-                 state_shape,
-                 action_shape):
-        self.state_shape = state_shape
-        self.action_shape = action_shape
+                 state_size,
+                 action_space):
+        self.state_size = state_size
+        self.action_space = action_space
     
     def step(self, action):
         raise NotImplementedError
