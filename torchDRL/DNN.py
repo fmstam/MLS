@@ -101,7 +101,7 @@ class DNN:
         loss.backward()
         self.model.optim.step()
 
-    def copy_weights(self, dnn:DNN, smoothing=False, smoothing_factor=1e-3):
+    def copy_weights(self, dnn, smoothing=False, smoothing_factor=1e-3):
         """ Copy weights from another DNN
          
         keyword arguments:

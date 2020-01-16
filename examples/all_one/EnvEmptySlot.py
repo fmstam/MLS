@@ -28,6 +28,7 @@ class EnvEmptySlot(AbstractEnvironement):
         action_space = [i for i in range(self.state_size)]
         
     def step(self, action):
+        done = 0
         if self.play_ground[action] == 1:
             reward = 0
         else:

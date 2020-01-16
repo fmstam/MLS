@@ -12,8 +12,8 @@ __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
 #from abc import ABC
-from utl.ReplayMemory import ReplayMemory
-from DNN import DNN 
+from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
+from MLS.torchDRL.DNN import DNN 
 
 class AbstractAgent():
     def __init__(self,
