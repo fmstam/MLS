@@ -1,5 +1,5 @@
 # Deep reinforcement learning package (MLS)
-Why MLS.
+## Why MLS?
 Most of the existing implementations of deep reinforcement learning algorithms mix everything, the environment, the neual nets, the agent, and the training loop. Making it diffcult to identify which is which.
 
 MLS is designed such that it abstracts almost everything. Therefore, reqardless of which platform you defined your neural nets, it still can run smoothing.
