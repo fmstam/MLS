@@ -9,7 +9,7 @@ Current examples are implemented in **pytorch** but MLS should support any platf
 The neural networks are implemented in pytroch and the package contains a Training Manager and is designed such that it reduces the overhead in the agents classes.
 
 The package is composed of these main parts:
- #### 1- core classes: 
+ #### 1- Core classes: 
   These are used to create replay memory, neural networks, agent algorithms, .... and so on. They are all abstract so that the y can be reshaped according to the required scenario
  #### 2 - Environement class:
  This class is abstract as well, and can be reshaped to fit any environment.
