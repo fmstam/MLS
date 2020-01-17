@@ -25,12 +25,13 @@ class DQNAgent(AbstractAgent):
                  target_critic:DNN,
                  replay_memory:ReplayMemory,
                  use_double=False, # true if we are going to use the DDQN algorithm instead 
+                 use_smoothing=False, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
                  epsilon=0.99,
                  delta_epsilon=1e-4, # epsilon decay
                  min_epsilon=0.01,
                  discount_factor=0.99, # gamma
                  smoothing_frequency=20,
-                 smoothing_factor=1e-3): 
+                 smoothing_factor=1e-2): 
 
         super(DQNAgent, self).__init__(critic=critic,
                                        state_size=state_size,
@@ -42,6 +43,7 @@ class DQNAgent(AbstractAgent):
         self.delta_epsilon = delta_epsilon
         self.min_epsilon = min_epsilon
         self.discount_factor = discount_factor
+        self.use_smoothing = use_smoothing
         self.smoothing_factor = smoothing_factor
         self.smoothing_frequency = smoothing_frequency
 
@@ -49,7 +51,31 @@ class DQNAgent(AbstractAgent):
     def validate(self, parameter_list):
         super.validate()
 
-
+    def get_action(self, state):
+        """ Apply the forward on the critic network and return the action.
+        Please note this is different from the get_action_epsilon_greedy function,
+         which follows eps-greedy algorithm. 
+        return:
+        action -- an integer value belongs to action space
+        """
+        return np.argmax(self.critic.forward(state).numpy())
+    
+    def get_action_epsilon_greedy(self, state):
+        """ epsilon-greedy algorithm.
+        """
+        if self.epsilon <= np.random.rand():
+            return self.get_action(state)
+        
+        return np.random.choice(self.action_space)
+    
+    def anneal(self):
+        """ Anneal epsilon, i.e cool down the exploration
+        """
+        if self.epsilon > self.min_epsilon:
+            self.epsilon = self.epsilon * self.delta_epsilon
+        else:
+            self.epsilon = self.min_epsilon
+    
 
     def learn(self, *args):
         """ The actual algorithm of DQN goes here
@@ -88,55 +114,15 @@ class DQNAgent(AbstractAgent):
             else: 
                 Q_state[i, action[i]] = reward[i] + self.discount_factor *  np.max(Q_state_[i,:])
             # do fitting again
-            self.critic.fit(state, Q_state)
+        self.critic.fit(state, Q_state)
         
         # Update the target critic weights accroding to smoothing_frequency
         if step % self.smoothing_frequency == 0:
-            self.target_critic.copy_weights(self.critic, smoothing=True, smoothing_factor=self.smoothing_factor)
+            self.target_critic.update_weights(self.critic, smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
         
         # anneal epsilon
-        self.anneal()
-
-
+        self.anneal()     
     
-        
-
-
-
-    def get_action(self, state):
-        """ Apply the forward on the critic network and return the action.
-        Please note this is different from the get_action_epsilon_greedy function,
-         which follows eps-greedy algorithm. 
-        return:
-        action -- an integer value belongs to action space
-        """
-        return np.argmax(self.critic.forward(state).numpy())
-    
-    def get_action_epsilon_greedy(self, state):
-        """ epsilon-greedy algorithm.
-        """
-        if self.epsilon <= np.random.rand():
-            return self.get_action(state)
-        
-        return np.random.choice(self.action_space)
-    
-    def anneal(self):
-        """ Anneal epsilon, i.e cooling down the exploration
-        """
-        if self.epsilon > self.min_epsilon:
-            self.epsilon = self.epsilon * self.delta_epsilon
-        else:
-            self.epsilon = self.min_epsilon
-
-
-        
-     
-        
-    
-
-
-
-
 
 
     

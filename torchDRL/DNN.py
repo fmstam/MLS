@@ -101,7 +101,21 @@ class DNN:
         loss.backward()
         self.model.optim.step()
 
-    def copy_weights(self, dnn, smoothing=False, smoothing_factor=1e-3):
+    def to_model_device(self, x):
+        """ place a variable into the same device as the model    
+
+        keyword arguments:
+        x -- a variable
+
+        return:
+        A platform dependant variable placed in the same device as the model
+        """
+
+        x = torch.Tensor(x)
+        x.to(self.model.device)
+        return x
+
+    def update_weights(self, dnn, smoothing=False, smoothing_factor=1e-3):
         """ Copy weights from another DNN
          
         keyword arguments:

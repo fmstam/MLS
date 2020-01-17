@@ -40,7 +40,7 @@ class EnvEmptySlot(AbstractEnvironement):
 
         state_ = self.play_ground
         extras = []
-        return state_, reward, done, extras
+        return state_, reward, done, extra_signals
 
     def reset(self):
         self.play_ground = np.zeros(self.state_size)

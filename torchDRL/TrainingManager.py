@@ -25,7 +25,7 @@ class TrainingManager:
                  env:AbstractEnvironement,
                  average_reward_steps=5,
                  device='cpu',
-                 logfile='training_log.txt'):
+                 log_file='training_log.txt'):
 
         """TrainingManager initializer.
 
@@ -44,6 +44,7 @@ class TrainingManager:
         self.env = env
         self.average_reward_steps = average_reward_steps
         self.device = device
+        self.log_file = log_file
 
     def run(self, verbose=False, plot=False, save_to_file=True, parallel=False):
         """ Run the RL scenario using the settings of the TrainingManager
@@ -80,11 +81,11 @@ class TrainingManager:
             episode_reward = 0
             while not done:
                 # call step function in the environement
-                state_, reward, done, extras = self.env.setp(action)
+                state_, reward, done, extra_signals = self.env.setp(action)
                 episode_reward += reward
 
                 # Call learn function in the agent. To learn for the last experience
-                self.agent.learn(step, state, state_, reward, action, done, extras)
+                self.agent.learn(step, state, state_, reward, action, done, extra_signals)
 
                 # next state-action pair
                 state = state_
