@@ -73,7 +73,7 @@ class DQNAgent(AbstractAgent):
         """ Anneal epsilon, i.e cool down the exploration
         """
         if self.epsilon > self.min_epsilon:
-            self.epsilon = self.epsilon * self.delta_epsilon
+            self.epsilon = self.epsilon - self.epsilon * self.delta_epsilon
         else:
             self.epsilon = self.min_epsilon
     
@@ -92,37 +92,42 @@ class DQNAgent(AbstractAgent):
         """
 
         # unpack args
-        step, state, state_, reward, action, done, _ = args 
+        total_steps, episode_step, state, state_, reward, action, done, _ = args 
 
+        # algorithm steps
+
+        
         # 1- store the experience into the memory
         self.replay_memory.remember(state, state_, reward, action, done)
 
-        # 2- sample random mini_batch
-        state, state_, reward, action, done = self.replay_memory.sample() 
+        # train only when there is enough data in the reply memory
+        if total_steps > self.replay_memory.batch_size:
+            # 2- sample random mini_batch
+            state, state_, reward, action, done = self.replay_memory.sample() 
 
-        # 3- core learning steps. 
-        
-        Q_state = self.critic.predict(state) # current state prediction from online network Q(s, a; \theta) 
-        Q_state_ = self.target_critic.predict(state_) # next state prediction from the target critic Q(s', a; \theta^-)
+            # 3- core learning steps. 
+            
+            Q_state = self.critic.predict(state) # current state prediction from online network Q(s, a; \theta) 
+            Q_state_ = self.target_critic.predict(state_) # next state prediction from the target critic Q(s', a; \theta^-)
 
-        # we can replace the following loop by a single line via broadcasting, 
-        # but I prefere it be explicit here to describe the actual mathematical equation
-        for i in range(self.mini_batch_size):
-            # we have two cases, 1) state_ is terminal 2) state_ is not terminal
-            # if state_ is terminal 
-            if done[i] == 1:
-                Q_state[i, action[i]] = reward[i]
-            else: 
-                Q_state[i, action[i]] = reward[i] + self.discount_factor *  np.max(Q_state_[i,:])
-            # do fitting again
-        self.critic.fit(state, Q_state)
-        
-        # Update the target critic weights accroding to smoothing_frequency
-        if step % self.smoothing_frequency == 0:
-            self.target_critic.update_weights(self.critic, smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
-        
-        # anneal epsilon
-        self.anneal()     
+            # we can replace the following loop by a single line via broadcasting, 
+            # but I prefere it be explicit here to describe the actual mathematical equation
+            for i in range(self.mini_batch_size):
+                # we have two cases, 1) state_ is terminal 2) state_ is not terminal
+                # if state_ is terminal 
+                if done[i] == 1:
+                    Q_state[i, action[i]] = reward[i]
+                else: 
+                    Q_state[i, action[i]] = reward[i] + self.discount_factor *  np.max(Q_state_[i,:])
+                # do fitting again
+            self.critic.fit(state, Q_state)
+            
+            # Update the target critic weights accroding to smoothing_frequency
+            if total_steps % self.smoothing_frequency == 0:
+                self.target_critic.update_weights(self.critic, smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
+            
+            # anneal epsilon
+            self.anneal()     
     
 
 

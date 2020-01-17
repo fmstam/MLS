@@ -95,11 +95,11 @@ class DNN:
         return self.model(source).detach().numpy()
 
     def fit(self, source, y, epochs=1):
-        y_pred = self.predict(source)
-        loss = self.model.loss_fun(y_pred, y)
-        self.model.optim.zero_grad()
+        y_pred = self.model(source)
+        loss = self.model.loss_fun(y_pred, torch.Tensor(y))
+        self.model.optimizer.zero_grad()
         loss.backward()
-        self.model.optim.step()
+        self.model.optimizer.step()
 
     def to_model_device(self, x):
         """ place a variable into the same device as the model    

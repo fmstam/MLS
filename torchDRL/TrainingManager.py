@@ -24,7 +24,6 @@ class TrainingManager:
                  agent:AbstractAgent,
                  env:AbstractEnvironement,
                  average_reward_steps=5,
-                 device='cpu',
                  log_file='training_log.txt'):
 
         """TrainingManager initializer.
@@ -43,7 +42,6 @@ class TrainingManager:
         self.agent = agent
         self.env = env
         self.average_reward_steps = average_reward_steps
-        self.device = device
         self.log_file = log_file
 
     def run(self, verbose=False, plot=False, save_to_file=True, parallel=False):
@@ -66,7 +64,7 @@ class TrainingManager:
 
         # do the magic here, i.e., the main training loop
         rewards = deque(maxlen=self.average_reward_steps)
-        average_reward = 0
+        total_steps = 0
         with open(self.log_file,mode='w') as log:
             for i in range(self.num_episodes): 
                 # 1 and 2- reset the environement and get initial state
@@ -76,21 +74,28 @@ class TrainingManager:
                 # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
                 # the episode ends 
                 step = 1
-                done = False
+                epsiode_done = False
                 episode_reward = 0
-                while not done:
+                actions_list =[]
+                while not epsiode_done and step < self.episode_length:
                     # call step function in the environement
                     state_, reward, done, extra_signals = self.env.step(action)
                     episode_reward += reward
+                    if done == 1:
+                        epsiode_done = True
 
                     # Call learn function in the agent. To learn for the last experience
-                    self.agent.learn(step, state, state_, reward, action, done, extra_signals)
+                    
+                    self.agent.learn(total_steps, step, state, state_, reward, action, done, extra_signals)
 
                     # next state-action pair
                     state = state_
-                    action = self.agent.get_action(state)
+                    action = self.agent.get_action_epsilon_greedy(state)
                     step += 1
-
+                    total_steps += 1
+                    actions_list = actions_list.append(action)
+                if verbose:
+                    print('Episode:{}\treward:{}\tsteps:{}'.format(i, episode_reward, step))
                 rewards.append(episode_reward)
                 average_reward = sum(rewards)/self.average_reward_steps
-            log.write(average_reward)
+                log.write(str(step)+ "\t" + str(episode_reward)+ "\t" + str(average_reward)+ str(actions_list)"\n")

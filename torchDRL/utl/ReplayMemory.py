@@ -57,8 +57,9 @@ class ReplayMemory:
         self.done[self.next_index] = done
         
         # move to the next index
-        self.next_index = (self.next_index + 1) % self.size 
         self.folds += (self.next_index + 1) // self.size 
+        self.next_index = (self.next_index + 1) % self.size 
+        
 
 
 
@@ -79,7 +80,11 @@ class ReplayMemory:
         if batch_size <= 0:
             batch_size = self.batch_size
         
-        indices = np.random.choice(self.size, batch_size, replace=False)
+        size = self.size
+        if self.folds < 1: # we still did not fill it all up
+            size = self.next_index
+
+        indices = np.random.choice(size, batch_size, replace=False)
         state = self.state[indices]
         state_ = self.state_[indices]
         reward = self.reward[indices]

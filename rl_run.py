@@ -12,11 +12,10 @@ def main():
             s.episode_length, 
             s.agent,
             s.env,
-            device=s.device,
             log_file=s.log_file)
 
     # let it do the magic
-    tm.run()
+    tm.run(verbose=True)
 
     
 
