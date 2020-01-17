@@ -91,6 +91,10 @@ class DNN:
                              hidden_layers_sizes=self.hidden_layers_sizes, 
                              device=self.device,
                              lr=self.lr)
+
+    def summary(self):
+        self.model.summary()
+
     def predict(self, source):
         return self.model(source).detach().numpy()
 

@@ -73,7 +73,7 @@ class TrainingManager:
                 action = self.agent.get_action(state)
                 # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
                 # the episode ends 
-                step = 1
+                step = 0
                 epsiode_done = False
                 episode_reward = 0
                 actions_list =[]
@@ -93,9 +93,9 @@ class TrainingManager:
                     action = self.agent.get_action_epsilon_greedy(state)
                     step += 1
                     total_steps += 1
-                    actions_list = actions_list.append(action)
+                    actions_list.append(action)
                 if verbose:
                     print('Episode:{}\treward:{}\tsteps:{}'.format(i, episode_reward, step))
                 rewards.append(episode_reward)
                 average_reward = sum(rewards)/self.average_reward_steps
-                log.write(str(step)+ "\t" + str(episode_reward)+ "\t" + str(average_reward)+ str(actions_list)"\n")
+                log.write(str(step)+ "\t" + str(episode_reward)+ "\t" + str(average_reward) + "\tActions list:" + str(actions_list) + "\n")

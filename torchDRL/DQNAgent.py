@@ -28,7 +28,7 @@ class DQNAgent(AbstractAgent):
                  use_smoothing=False, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
                  epsilon=0.99,
                  delta_epsilon=1e-4, # epsilon decay
-                 min_epsilon=0.01,
+                 min_epsilon=0.1,
                  discount_factor=0.99, # gamma
                  smoothing_frequency=20,
                  smoothing_factor=1e-2): 

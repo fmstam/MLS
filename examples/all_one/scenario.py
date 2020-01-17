@@ -28,17 +28,21 @@ env = EnvEmptySlot(state_size=state_size, action_space=action_space)
 
 # neural nets
 device = 'cpu'
-hidden_layers_sizes = [16, 16]
+hidden_layers_sizes = [128, 128]
+lr = 0.0001
 
 critic = DNN(input_shape=state_size,
             output_shape=len(action_space),
             hidden_layers_sizes=hidden_layers_sizes,
+            lr=lr,
             device=device)
 
 target_critic = DNN(input_shape=state_size,
             output_shape=len(action_space),
             hidden_layers_sizes=hidden_layers_sizes,
             device=device)
+
+critic.summary()
 
 # replay memory
 replay_memory = ReplayMemory(state_type=state_type,
@@ -52,11 +56,11 @@ agent = DQNAgent(state_size=state_size,
                  critic=critic,
                  target_critic=target_critic,
                  replay_memory=replay_memory,
-                 smoothing_frequency = 30)
+                 smoothing_frequency = 50)
 
 ####### training options to be used by the training manager #######
-num_episodes = 1000
-episode_length = 200
+num_episodes = 5000
+episode_length = 10
 log_file = 'scenario_name_log_file.txt'
 
 
