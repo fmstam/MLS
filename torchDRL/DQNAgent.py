@@ -34,8 +34,9 @@ class DQNAgent(AbstractAgent):
                  smoothing_factor=1e-2): 
 
         super(DQNAgent, self).__init__(critic=critic,
+                                       actor=None, # DQN has no actor
                                        state_size=state_size,
-                                       action_size=len(action_space),
+                                       action_space=action_space,
                                        replay_memory=replay_memory)
         
         self.target_critic = target_critic
@@ -58,7 +59,7 @@ class DQNAgent(AbstractAgent):
         return:
         action -- an integer value belongs to action space
         """
-        return np.argmax(self.critic.forward(state).numpy())
+        return np.argmax(self.critic.predict(state))
     
     def get_action_epsilon_greedy(self, state):
         """ epsilon-greedy algorithm.
@@ -94,7 +95,7 @@ class DQNAgent(AbstractAgent):
         step, state, state_, reward, action, done, _ = args 
 
         # 1- store the experience into the memory
-        self.replay_memory.reward(state, state_, reward, done)
+        self.replay_memory.remember(state, state_, reward, action, done)
 
         # 2- sample random mini_batch
         state, state_, reward, action, done = self.replay_memory.sample() 

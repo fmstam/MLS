@@ -29,6 +29,8 @@ class EnvEmptySlot(AbstractEnvironement):
         
     def step(self, action):
         done = 0
+        extra_signals = []
+
         if self.play_ground[action] == 1:
             reward = 0
         else:
@@ -37,10 +39,11 @@ class EnvEmptySlot(AbstractEnvironement):
         
         if (self.play_ground == 1).all(): # board is full
             done = 1
+            
+        state_ = self.play_ground.copy()
 
-        state_ = self.play_ground
-        extras = []
         return state_, reward, done, extra_signals
 
     def reset(self):
         self.play_ground = np.zeros(self.state_size)
+        return self.play_ground.copy()

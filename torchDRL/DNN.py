@@ -92,7 +92,7 @@ class DNN:
                              device=self.device,
                              lr=self.lr)
     def predict(self, source):
-        return self.model(source)
+        return self.model(source).detach().numpy()
 
     def fit(self, source, y, epochs=1):
         y_pred = self.predict(source)

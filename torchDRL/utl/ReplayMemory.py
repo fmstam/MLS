@@ -16,18 +16,20 @@ import numpy as np
 
 class ReplayMemory:
     def __init__(self, 
-                size=1e6, 
+                state_size,
+                action_size, 
+                size=1e6,
                 batch_size=64, 
                 state_type=np.float32, 
                 action_type=np.uint16):
-        self.size = size
+        self.size = int(size)
         self.state_type = state_type
         self.action_type = action_type
         self.batch_size = batch_size
-        self.state = np.zeros(self.size, dtype=self.state_type)
-        self.action = np.zeros(self.size, dtype=self.action_type)
-        self.state_ = np.zeros(self.size, dtype=self.state_type)
+        self.state = np.zeros((self.size, state_size), dtype=self.state_type)
+        self.state_ = np.zeros((self.size, state_size), dtype=self.state_type)
         self.reward = np.zeros(self.size, dtype=np.float32)
+        self.action = np.zeros(self.size, dtype=self.action_type)
         self.done = np.zeros(self.size, dtype=np.bool)
 
         self.next_index = 0 # initial position in the memory

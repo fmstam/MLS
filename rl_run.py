@@ -7,7 +7,6 @@ from MLS.torchDRL.TrainingManager import TrainingManager as TM
 
 
 def main():
-
     # define a training manager object
     tm = TM(s.num_episodes, 
             s.episode_length, 

@@ -12,8 +12,8 @@ __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
-from AbstractAgent import AbstractAgent
-from AbstractEnvironment import AbstractEnvironement
+from MLS.torchDRL.AbstractAgent import AbstractAgent
+from MLS.torchDRL.AbstractEnvironment import AbstractEnvironement
 
 from collections import deque # to mantian the last k rewards
 
@@ -62,34 +62,35 @@ class TrainingManager:
         assert self.average_reward_steps > 1, "Reward must be averaged on more than 1 episode"
         
         # validate the agent is ready for training
-        assert self.agent.validate()
+        #assert self.agent.validate(), "Agent validation failed"
 
-        
         # do the magic here, i.e., the main training loop
         rewards = deque(maxlen=self.average_reward_steps)
         average_reward = 0
-
-        for i in range(self.num_episodes): 
-            # 1 and 2- reset the environement and get initial state
-            state = self.env.reset()
-            # 3 get first action
-            action = self.agent.get_action(state)
-            # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
-            # the episode ends 
-            step = 0
-            done = False
-            episode_reward = 0
-            while not done:
-                # call step function in the environement
-                state_, reward, done, extra_signals = self.env.setp(action)
-                episode_reward += reward
-
-                # Call learn function in the agent. To learn for the last experience
-                self.agent.learn(step, state, state_, reward, action, done, extra_signals)
-
-                # next state-action pair
-                state = state_
+        with open(self.log_file,mode='w') as log:
+            for i in range(self.num_episodes): 
+                # 1 and 2- reset the environement and get initial state
+                state = self.env.reset()
+                # 3 get first action
                 action = self.agent.get_action(state)
+                # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
+                # the episode ends 
+                step = 1
+                done = False
+                episode_reward = 0
+                while not done:
+                    # call step function in the environement
+                    state_, reward, done, extra_signals = self.env.step(action)
+                    episode_reward += reward
 
-            rewards.append(episode_reward)
-            average_reward = sum(rewards)/self.average_reward_steps
+                    # Call learn function in the agent. To learn for the last experience
+                    self.agent.learn(step, state, state_, reward, action, done, extra_signals)
+
+                    # next state-action pair
+                    state = state_
+                    action = self.agent.get_action(state)
+                    step += 1
+
+                rewards.append(episode_reward)
+                average_reward = sum(rewards)/self.average_reward_steps
+            log.write(average_reward)

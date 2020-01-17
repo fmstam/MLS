@@ -12,11 +12,14 @@ from MLS.torchDRL.DNN import DNN
 from MLS.torchDRL.DQNAgent import DQNAgent 
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
+import numpy as np
 ###### main component of the scenario go here ######
 
 # state and action
 state_size = 5
 action_space = [i for i in range(state_size)]
+state_type = np.int16
+action_type = np.int16
 
 # envirnoment
 env = EnvEmptySlot(state_size=state_size, action_space=action_space)
@@ -33,7 +36,10 @@ target_critic = DNN(input_shape=state_size,
             device='cpu')
 
 # replay memory
-replay_memory = ReplayMemory()
+replay_memory = ReplayMemory(state_type=state_type,
+                             action_type=action_type,
+                             state_size=state_size,
+                             action_size=len(action_space),)
 
 # agent
 agent = DQNAgent(state_size=state_size, 
