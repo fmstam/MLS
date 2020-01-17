@@ -1,4 +1,11 @@
-# Deep reinforcement learning package in pytorch
+# Deep reinforcement learning package (MLS)
+Why MLS.
+Most of the existing implementations of deep reinforcement learning algorithms mix everything, the environment, the neual nets, the agent, and the training loop. Making it diffcult to identify which is which.
+
+MLS is designed such that it abstracts almost everything. Therefore, reqardless of which platform you defined your neural nets, it still can run smoothing.
+
+Current examples are implemented in **pytorch** but MLS should support any platform nicely. I am working on that part. I have just worked for two afternoons so far, I am planning to finish it soon, but you can contribute if you want.
+
 The neural networks are implemented in pytroch and the package contains a Training Manager and is designed such that it reduces the overhead in the agents classes.
 
 The package is composed of these main parts:
@@ -13,11 +20,19 @@ The package is composed of these main parts:
  
  #### 5- run file:
  The code in the main function is in principle the same for every RL scenario. However, this file main role is to read the scenario file and send it to the training manager to run it
+ 
+## How to use it:
+It is simple, see the example in `scenario.py`. You need to subclass the abstract environement class `AbstractEnvironment`, create neural networks, using any platform you like (torch, TF, Keras, and so on), and then create an agent. That is it.
+
+
 
 ## Implemented algorithms 
- ### 1- DQN 
- ### 2- DDQN
- ### 3- Actor-Critic (AC)
- ### 4- Policy Gradient
- ### 5- Deep Deterministic Policy Gradient
+ ### 1- DQN (included)
+ ### 2- Double DQN (included)
+ ### 3- Deuling Double DQN (in progress)
+ ### 3- Actor-Critic (queued)
+ ### 4- Policy Gradient (queued)
+ ### 5- Deep Deterministic Policy Gradient (DDPG) (queued)
+ 
+ 
 
