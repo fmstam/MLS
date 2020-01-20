@@ -99,8 +99,8 @@ class DNNDeulingArch(nn.Module):
             self.layers.append(nn.Linear(hidden_layers_sizes[i-1], hidden_layers_sizes[i]))
 
         # value-advantage layer
-        self.A_layer = nn.Linear(hidden_layers_sizes[-1], output_shape)
-        self.V_layer = nn.Linear(hidden_layers_sizes, 1)
+        self.A_layer = nn.Linear(hidden_layers_sizes[-1], self.output_shape)
+        self.V_layer = nn.Linear(hidden_layers_sizes[-1], 1)
         
     
         # optimizer and loss
@@ -120,14 +120,12 @@ class DNNDeulingArch(nn.Module):
             x = F.relu(self.layers[i](x))
 
         # now let AV-layer takes care of x 
-        self.A_layer = self.A_layer(x)
-        self.V_layer = self.V_layer(x)
+        x_A = self.A_layer(x)
+        x_V = self.V_layer(x)
         # combine both A and V layers
-        # expand V_layer to the same size as V
-        self.V_layer = self.V_layer.expand(-1, self.output_shape)
 
         # subtracted mean formula
-        actions = self.V_layer + (self.A_layer -self.A_layer.mean().expand(-1, self.output_shape))
+        actions = x_V + (x_A - x_A.mean())
 
         return actions # actions
     

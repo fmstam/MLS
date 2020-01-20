@@ -18,7 +18,7 @@ import numpy as np
 
 
 # state and action
-state_size = 30
+state_size = 20
 action_space = [i for i in range(state_size)]
 state_type = np.int16
 action_type = np.int16
