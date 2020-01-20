@@ -28,7 +28,7 @@ class DQNAgent(AbstractAgent):
                  use_smoothing=False, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
                  epsilon=0.99,
                  delta_epsilon=1e-4, # epsilon decay
-                 min_epsilon=0.1,
+                 min_epsilon=0.01,
                  discount_factor=0.99, # gamma
                  smoothing_frequency=20,
                  smoothing_factor=1e-2): 
@@ -47,6 +47,7 @@ class DQNAgent(AbstractAgent):
         self.use_smoothing = use_smoothing
         self.smoothing_factor = smoothing_factor
         self.smoothing_frequency = smoothing_frequency
+        self.use_double = use_double
 
 
     def validate(self, parameter_list):
@@ -118,7 +119,14 @@ class DQNAgent(AbstractAgent):
                 if done[i] == 1:
                     Q_state[i, action[i]] = reward[i]
                 else: 
-                    Q_state[i, action[i]] = reward[i] + self.discount_factor *  np.max(Q_state_[i,:])
+                    # here we which DQN variant the agent will follow, 
+                    # not the best approach but is informative
+                    if self.use_double: # use Double DQN
+                        act = np.argmax(Q_state_[i,:])
+                        Q_state[i, action[i]] = reward[i] + self.discount_factor * Q_state[i, act]
+                    else: # traditional DQN
+                        Q_state[i, action[i]] = reward[i] + self.discount_factor *  np.max(Q_state_[i,:])
+
                 # do fitting again
             self.critic.fit(state, Q_state)
             

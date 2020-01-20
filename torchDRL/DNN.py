@@ -19,7 +19,7 @@ import torch.optim as optim
 
 import numpy as np
 
-class torchDNN(nn.Module):
+class DNNArch(nn.Module):
     def __init__(self,
                  input_shape, 
                  output_shape, 
@@ -27,7 +27,7 @@ class torchDNN(nn.Module):
                  device='cpu', 
                  lr=1e-4):
         
-        super(torchDNN, self).__init__()
+        super(DNNArch, self).__init__()
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
@@ -56,13 +56,14 @@ class torchDNN(nn.Module):
 
 
     def forward(self, observation):
+        
         x = torch.Tensor(observation).to(self.device)
 
         # forward loop
         for i in range(len(self.layers)-1):
             x = F.relu(self.layers[i](x))
 
-        # output layer    
+        # output layer   
         actions = self.layers[-1](x)
 
         return actions # actions
@@ -70,6 +71,72 @@ class torchDNN(nn.Module):
 
     def summary(self):
         print(self)
+
+class DNNDeulingArch(nn.Module):
+    def __init__(self,
+                 input_shape, 
+                 output_shape, 
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4):
+        
+        super(DNNDeulingArch, self).__init__()
+        self.input_shape = input_shape
+        self.output_shape = output_shape
+        self.hidden_layers_sizes = hidden_layers_sizes
+
+        self.device = 'cpu' # default is the cpu
+        if device is 'gpu':
+            if torch.cuda.is_available():
+                self.device = 'cuda:0'
+            
+        
+        # implement the actual neural network
+        # first layer
+        self.layers = nn.ModuleList([nn.Linear(input_shape, hidden_layers_sizes[0])]) 
+        # loop over the network depth
+        for i in range(1, len(hidden_layers_sizes)): 
+            self.layers.append(nn.Linear(hidden_layers_sizes[i-1], hidden_layers_sizes[i]))
+
+        # value-advantage layer
+        self.A_layer = nn.Linear(hidden_layers_sizes[-1], output_shape)
+        self.V_layer = nn.Linear(hidden_layers_sizes, 1)
+        
+    
+        # optimizer and loss
+        self.optimizer = optim.Adam(self.parameters(), lr=lr)
+        self.loss_fun = nn.MSELoss(reduction='sum')
+
+        # put the model in the self.device
+        self.to(self.device)
+
+
+    def forward(self, observation):
+        x = torch.Tensor(observation).to(self.device)
+        batch_size = x.size(0)
+
+        # forward loop
+        for i in range(len(self.layers)-1):
+            x = F.relu(self.layers[i](x))
+
+        # now let AV-layer takes care of x 
+        self.A_layer = self.A_layer(x)
+        self.V_layer = self.V_layer(x)
+        # combine both A and V layers
+        # expand V_layer to the same size as V
+        self.V_layer = self.V_layer.expand(-1, self.output_shape)
+
+        # subtracted mean formula
+        actions = self.V_layer + (self.A_layer -self.A_layer.mean().expand(-1, self.output_shape))
+
+        return actions # actions
+    
+
+    def summary(self):
+        print(self)
+
+
+
 
 
 
@@ -86,7 +153,8 @@ class DNN:
         self.device = device
         self.lr = lr
 
-        self.model = torchDNN(input_shape=self.input_shape,
+        # change only this line to include any different architecture in pytorch
+        self.model = DNNDeulingArch(input_shape=self.input_shape,
                              output_shape=self.output_shape, 
                              hidden_layers_sizes=self.hidden_layers_sizes, 
                              device=self.device,
@@ -96,11 +164,12 @@ class DNN:
         self.model.summary()
 
     def predict(self, source):
-        return self.model(source).detach().numpy()
+        return self.model(source).detach().cpu().numpy()
+    
 
     def fit(self, source, y, epochs=1):
         y_pred = self.model(source)
-        loss = self.model.loss_fun(y_pred, torch.Tensor(y))
+        loss = self.model.loss_fun(y_pred, torch.Tensor(y).to(self.model.device))
         self.model.optimizer.zero_grad()
         loss.backward()
         self.model.optimizer.step()

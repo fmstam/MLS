@@ -17,7 +17,6 @@ __status__ = "Production"
 from MLS.torchDRL.AbstractEnvironment import AbstractEnvironement
 import numpy as np
 
-
 class EnvEmptySlot(AbstractEnvironement):
     def __init__(self,
                  state_size = 5,
@@ -30,13 +29,13 @@ class EnvEmptySlot(AbstractEnvironement):
     def step(self, action):
         done = 0
         extra_signals = []
-
         if self.play_ground[action] == 1:
-            reward = 0
+            reward = -1
         else:
             reward = 1
             self.play_ground[action] = 1
         
+        #self.play_ground[np.random.randint(low=0, high=self.state_size)] = 1
         if (self.play_ground == 1).all(): # board is full
             done = 1
             

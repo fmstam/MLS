@@ -78,6 +78,8 @@ class TrainingManager:
                 episode_reward = 0
                 actions_list =[]
                 while not epsiode_done and step < self.episode_length:
+                    # record actions
+                    actions_list.append(action)
                     # call step function in the environement
                     state_, reward, done, extra_signals = self.env.step(action)
                     episode_reward += reward
@@ -93,7 +95,6 @@ class TrainingManager:
                     action = self.agent.get_action_epsilon_greedy(state)
                     step += 1
                     total_steps += 1
-                    actions_list.append(action)
                 if verbose:
                     print('Episode:{}\treward:{}\tsteps:{}'.format(i, episode_reward, step))
                 rewards.append(episode_reward)

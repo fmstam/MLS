@@ -13,12 +13,12 @@ from MLS.torchDRL.DQNAgent import DQNAgent
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
-###### main component of the scenario go here ######
+###### main components of the scenario go here ######
 
 
 
 # state and action
-state_size = 5
+state_size = 30
 action_space = [i for i in range(state_size)]
 state_type = np.int16
 action_type = np.int16
@@ -27,8 +27,8 @@ action_type = np.int16
 env = EnvEmptySlot(state_size=state_size, action_space=action_space)
 
 # neural nets
-device = 'cpu'
-hidden_layers_sizes = [128, 128]
+device = 'gpu'
+hidden_layers_sizes = [64, 64, 64]
 lr = 0.0001
 
 critic = DNN(input_shape=state_size,
@@ -51,16 +51,23 @@ replay_memory = ReplayMemory(state_type=state_type,
                              action_size=len(action_space),)
 
 # agent
+delta_epsilon=1e-3
+smoothing_frequency = 100
+min_epsilon = 0.0005
+use_double = True # Double DQN
 agent = DQNAgent(state_size=state_size, 
                  action_space=action_space,
                  critic=critic,
                  target_critic=target_critic,
                  replay_memory=replay_memory,
-                 smoothing_frequency = 50)
+                 delta_epsilon=delta_epsilon,
+                 min_epsilon=min_epsilon,
+                 smoothing_frequency = smoothing_frequency,
+                 use_double=use_double)
 
 ####### training options to be used by the training manager #######
 num_episodes = 5000
-episode_length = 10
+episode_length = 2 * state_size
 log_file = 'scenario_name_log_file.txt'
 
 

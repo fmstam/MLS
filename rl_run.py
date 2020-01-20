@@ -4,6 +4,9 @@ sys.path.append("..")
 from MLS.examples.all_one import scenario as s
 from MLS.torchDRL.TrainingManager import TrainingManager as TM
 
+import timeit
+
+
 
 
 def main():
@@ -14,8 +17,13 @@ def main():
             s.env,
             log_file=s.log_file)
 
+    start = timeit.default_timer()
     # let it do the magic
     tm.run(verbose=True)
+    end = timeit.default_timer()
+    print('\n It took ~{} useconds'.format(str(round(end-start))))
+    
+
 
     
 
