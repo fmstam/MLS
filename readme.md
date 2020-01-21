@@ -1,7 +1,5 @@
 # Deep reinforcement learning package (MLS)
 ## Why MLS?
-Most of the existing implementations of deep reinforcement learning algorithms mix everything, the environment, the neual nets, the agent, and the training loop. Making it diffcult to identify which is which.
-
 MLS is designed such that it abstracts almost everything. Therefore, reqardless of which platform you defined your neural nets, it still can run smoothing.
 
 Current examples are implemented in **pytorch** but MLS should support any platform nicely. I am working on that part. I have just worked for two afternoons so far, I am planning to finish it soon, but you can contribute if you want.
