@@ -13,12 +13,10 @@ from MLS.torchDRL.DQNAgent import DQNAgent
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
-###### main components of the scenario go here ######
-
-
+###### main components of the scenario go here #####
 
 # state and action
-state_size = 20
+state_size = 30
 action_space = [i for i in range(state_size)]
 state_type = np.int16
 action_type = np.int16

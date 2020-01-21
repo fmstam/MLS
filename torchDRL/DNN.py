@@ -199,17 +199,7 @@ class DNN:
         else:
             for param1, param2 in zip(self.model.parameters(), dnn.model.parameters()):
                 param1.data.copy_(smoothing_factor * param1 + (1 - smoothing_factor) * param2)
-
-    
-
-        
-
-        
-
-
-
-     
-     
+             
 if __name__ == "__main__":
     # execute only if run as a script
     pass
