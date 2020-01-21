@@ -27,9 +27,8 @@ It is simple, see the example in `scenario.py`. You need to subclass the abstrac
 ## Implemented algorithms 
  ### 1- DQN (included)
  ### 2- Double DQN (included)
- ### 3- Deuling Double DQN (in progress)
- ### 3- Actor-Critic (queued)
- ### 4- Policy Gradient (queued)
+ ### 3- Deuling Double DQN (included)
+ ### 4- Actor-Critic (in progress)
  ### 5- Deep Deterministic Policy Gradient (DDPG) (queued)
  
  
