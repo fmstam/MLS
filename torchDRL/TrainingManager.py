@@ -87,9 +87,7 @@ class TrainingManager:
                         epsiode_done = True
 
                     # Call learn function in the agent. To learn for the last experience
-                    
                     self.agent.learn(total_steps, step, state, state_, reward, action, done, extra_signals)
-
                     # next state-action pair
                     state = state_
                     action = self.agent.get_action_epsilon_greedy(state)

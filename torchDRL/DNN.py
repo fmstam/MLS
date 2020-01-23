@@ -64,13 +64,14 @@ class DNNArch(nn.Module):
             x = F.relu(self.layers[i](x))
 
         # output layer   
-        actions = self.layers[-1](x)
+        actions = F.softmax(self.layers[-1](x))
 
         return actions # actions
     
 
     def summary(self):
         print(self)
+
 
 class DNNDeulingArch(nn.Module):
     def __init__(self,
@@ -113,7 +114,6 @@ class DNNDeulingArch(nn.Module):
 
     def forward(self, observation):
         x = torch.Tensor(observation).to(self.device)
-        batch_size = x.size(0)
 
         # forward loop
         for i in range(len(self.layers)-1):
@@ -123,7 +123,6 @@ class DNNDeulingArch(nn.Module):
         x_A = self.A_layer(x)
         x_V = self.V_layer(x)
         # combine both A and V layers
-
         # subtracted mean formula
         actions = x_V + (x_A - x_A.mean())
 
@@ -134,11 +133,68 @@ class DNNDeulingArch(nn.Module):
         print(self)
 
 
+class DNNACArch(nn.Module):
+    def __init__(self,
+                 input_shape, 
+                 a_output_shape, 
+                 c_output_shape=1,
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4)
+        super(DNNArch, self).__init__()
+
+        self.input_shape = input_shape
+        self.a_output_shape = a_output_shape
+        self.c_output_shape = c_output_shape
+        self.hidden_layers_sizes = hidden_layers_sizes
+        self.devide = 'cpu'
+        self.lr = lr
+
+        if device is 'gpu':
+            if self.cude.is_available():
+                self.device = 'cuda:0'
+        
+        # actor network
+        # first layer
+        self.a_layers = nn.ModuleList([nn.Linear(self.a_input_shape, self.hidden_layers_sizes[0])])
+        # other layers
+        for i in range(1,len(self.hidden_layers_sizes)):
+            self.a_layers.append(nn.Linear(self.hidden_layers_sizes[i-1], self.hidden_layers_sizes[i]))
+        # output layer
+        self.a_layers.append(nn.Linear(self.hidden_layers_sizes[-1], self.a_output_shape))
+
+        # critic network
+        self.c_layers = nn.ModuleList([nn.Linear(self.a_input_shape, self.hidden_layers_sizes[0])])
+        # hidden layers
+        self.c_layers.extend([nn.Linear(self.hidden_layers_sizes[i-1], self.hidden_layers_sizes[i]) for i in range(1, len(self.hidden_layers_sizes))])
+        # output layer
+        self.c
 
 
 
+        
 
-class DNN:
+
+# neual net class for Actor-critic methods
+class ACDNN:
+    def __init__(self,
+                 input_shape, 
+                 a_output_shape, 
+                 c_output_shape=1,
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4)
+        self.input_shape = input_shape
+        self.a_output_shape = a_output_shape
+        self.c_output_shape = c_output_shape
+        self.hidden_layers_sizes = hidden_layers_sizes
+        self.device = device
+        self.lr = lr
+
+
+
+# neural net class for DQN models
+class DQNDNN:
     def __init__(self,
                  input_shape, 
                  output_shape, 
@@ -152,6 +208,7 @@ class DNN:
         self.lr = lr
 
         # change only this line to include any different architecture in pytorch
+        # we have two architecture DNNArch and DNNDeulingArch.
         self.model = DNNDeulingArch(input_shape=self.input_shape,
                              output_shape=self.output_shape, 
                              hidden_layers_sizes=self.hidden_layers_sizes, 
