@@ -12,7 +12,7 @@ __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
 from MLS.torchDRL.AbstractAgent import AbstractAgent
-from MLS.torchDRL.DNN import DNN
+from MLS.torchDRL.DNN import DQNDNN
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
@@ -21,8 +21,8 @@ class DQNAgent(AbstractAgent):
     def __init__(self,
                  state_size,
                  action_space,
-                 critic:DNN, # Online critic
-                 target_critic:DNN,
+                 critic:DQNDNN, # Online critic
+                 target_critic:DQNDNN,
                  replay_memory:ReplayMemory,
                  use_double=False, # true if we are going to use the DDQN algorithm instead 
                  use_smoothing=False, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
@@ -62,6 +62,9 @@ class DQNAgent(AbstractAgent):
         """
         return np.argmax(self.critic.predict(state))
     
+    def get_policy_action(self, state)
+        return self.get_action_epsilon_greedy(state)
+
     def get_action_epsilon_greedy(self, state):
         """ epsilon-greedy algorithm.
         """
@@ -136,7 +139,3 @@ class DQNAgent(AbstractAgent):
             
             # anneal epsilon
             self.anneal()     
-    
-
-
-    

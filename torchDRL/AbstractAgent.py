@@ -13,12 +13,11 @@ __status__ = "Production"
 
 #from abc import ABC
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
-from MLS.torchDRL.DNN import DNN 
 
 class AbstractAgent():
     def __init__(self,
-                 actor:DNN, 
-                 critic:DNN, 
+                 actor, 
+                 critic, 
                  replay_memory:ReplayMemory, 
                  state_size, 
                  action_space,
@@ -39,6 +38,9 @@ class AbstractAgent():
     def learn(self, *args):
         raise NotImplementedError
 
+    def get_policy_action(self, state):
+        raise NotImplementedError
+    
     def get_action(self, state):
         raise NotImplementedError
 

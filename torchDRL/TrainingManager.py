@@ -90,7 +90,7 @@ class TrainingManager:
                     self.agent.learn(total_steps, step, state, state_, reward, action, done, extra_signals)
                     # next state-action pair
                     state = state_
-                    action = self.agent.get_action_epsilon_greedy(state)
+                    action = self.agent.get_policy_action(state)
                     step += 1
                     total_steps += 1
                 if verbose:
