@@ -154,6 +154,7 @@ class DNNACArch(nn.Module):
             if self.cude.is_available():
                 self.device = 'cuda:0'
         
+        ## models
         # actor network
         # first layer
         self.a_layers = nn.ModuleList([nn.Linear(self.a_input_shape, self.hidden_layers_sizes[0])])
@@ -168,14 +169,32 @@ class DNNACArch(nn.Module):
         # hidden layers
         self.c_layers.extend([nn.Linear(self.hidden_layers_sizes[i-1], self.hidden_layers_sizes[i]) for i in range(1, len(self.hidden_layers_sizes))])
         # output layer
-        self.c
+        self.c_layers.append(nn.Linear(self.hidden_layers_sizes[-1], self.c_output_shape))
 
 
+        # opitmizer, the loss is defined seperately 
+        self.optimizer = optim.RMSprop(self.parameters(), lr=self.lr)
 
+        self.to(self.device)
         
 
+    def forward(self, observation):
 
-# neual net class for Actor-critic methods
+        x = torch.Tensor(observation).to(self.device)
+        v = torch.Tensor(observation).to(self.device)
+        for i in range(len(self.hidden_layers_sizes)):
+            x = F.relu(self.a_layers[i](x))
+            v = F.relu(self.c_layers[i](v))
+
+        # generate probabilities from the last layer
+        probs = F.softmax(x)
+
+        # return value estimate from the critic and probabilty distribution from the actor
+        return v, probs
+
+    
+
+# neual net class for Actor-critic agents
 class ACDNN:
     def __init__(self,
                  input_shape, 
@@ -190,7 +209,53 @@ class ACDNN:
         self.hidden_layers_sizes = hidden_layers_sizes
         self.device = device
         self.lr = lr
+        
+        self.model = DNNACArch(input_shape=self.input_shape
+                               a_output_shape=self.a_output_shape
+                               c_output_shape=self.c_output_shape,
+                               hidden_layers_sizes=self.hidden_layers_sizes, 
+                               device=self.device, 
+                               lr=self.lr)
+        def predict(self, source):
+            v, probs = self.model(source);
+            return v.detach().cpu.numpy(), /
+                   probs.detach().cpu.numpy()
+        
+        def calc_loss(self,
+                      discounted_r,
+                      values,
+                      log_probs,
+                      entropy,
+                      entropy_factor=0.01):
+            """
+            calculate the loss function and do the backward step
 
+            keyword arguments:
+            discounted_r -- the estimated Q in the Advantage equation: A_t(s, a) = r_{t+1} + \gamma v_{t+1}(s) - v_t(s)
+            values -- the esitmated values produced by the ciritic model
+            log_probs -- the log of the distribution of the actions produced by the actor model
+            entropy -- the entropy term which is used to encourage exploration. It is calcualted from probs
+            entropy_factor -- is the contribution of the entropy term in the loss. Higher value means higher exploration.
+            """
+
+            discounted_r = torch.Tensor(discounted_r).to(self.model.device)
+            values = torch.Tensor(values).to(self.model.device)
+            log_probs = torch.Tensor(log_probs).to(self.model.device)
+            entropy = torch.Tensor(entropy).to(self.model.device)
+
+            # critic loss
+            adv = discounted_r - values
+            critic_loss = 0.5 * adv.pow(2).mean()
+
+            # actor loss
+            actor_loss = (log_probs * adv).mean()
+
+            loss = -(actor_loss + entropy_factor * entropy) + critic_loss
+
+            # reset grads
+            self.opitmizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
 
 
 # neural net class for DQN models
