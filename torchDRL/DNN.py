@@ -140,8 +140,8 @@ class DNNACArch(nn.Module):
                  c_output_shape=1,
                  hidden_layers_sizes=[16, 16], 
                  device='cpu', 
-                 lr=1e-4)
-        super(DNNArch, self).__init__()
+                 lr=1e-4):
+        super(DNNACArch, self).__init__()
 
         self.input_shape = input_shape
         self.a_output_shape = a_output_shape
@@ -202,7 +202,7 @@ class ACDNN:
                  c_output_shape=1,
                  hidden_layers_sizes=[16, 16], 
                  device='cpu', 
-                 lr=1e-4)
+                 lr=1e-4):
         self.input_shape = input_shape
         self.a_output_shape = a_output_shape
         self.c_output_shape = c_output_shape
@@ -210,52 +210,53 @@ class ACDNN:
         self.device = device
         self.lr = lr
         
-        self.model = DNNACArch(input_shape=self.input_shape
-                               a_output_shape=self.a_output_shape
+        self.model = DNNACArch(input_shape=self.input_shape,
+                               a_output_shape=self.a_output_shape,
                                c_output_shape=self.c_output_shape,
                                hidden_layers_sizes=self.hidden_layers_sizes, 
                                device=self.device, 
                                lr=self.lr)
-        def predict(self, source):
-            v, probs = self.model(source);
-            return v.detach().cpu.numpy(), /
-                   probs.detach().cpu.numpy()
-        
-        def calc_loss(self,
-                      discounted_r,
-                      values,
-                      log_probs,
-                      entropy,
-                      entropy_factor=0.01):
-            """
-            calculate the loss function and do the backward step
 
-            keyword arguments:
-            discounted_r -- the estimated Q in the Advantage equation: A_t(s, a) = r_{t+1} + \gamma v_{t+1}(s) - v_t(s)
-            values -- the esitmated values produced by the ciritic model
-            log_probs -- the log of the distribution of the actions produced by the actor model
-            entropy -- the entropy term which is used to encourage exploration. It is calcualted from probs
-            entropy_factor -- is the contribution of the entropy term in the loss. Higher value means higher exploration.
-            """
 
-            discounted_r = torch.Tensor(discounted_r).to(self.model.device)
-            values = torch.Tensor(values).to(self.model.device)
-            log_probs = torch.Tensor(log_probs).to(self.model.device)
-            entropy = torch.Tensor(entropy).to(self.model.device)
+    def predict(self, source):
+        v, probs = self.model(source)
+        return v.detach().cpu.numpy(), probs.detach().cpu.numpy()
+    
+    def calc_loss(self,
+                    discounted_r,
+                    values,
+                    log_probs,
+                    entropy,
+                    entropy_factor=0.01):
+        """ Calculate the loss function and do the backward step
 
-            # critic loss
-            adv = discounted_r - values
-            critic_loss = 0.5 * adv.pow(2).mean()
+        keyword arguments:
+        discounted_r -- the estimated Q in the Advantage equation: A_t(s, a) = r_{t+1} + gamma v_{t+1}(s) - v_t(s)
+        values -- the esitmated values produced by the ciritic model
+        log_probs -- the log of the distribution of the actions produced by the actor model
+        entropy -- the entropy term which is used to encourage exploration. It is calcualted from probs
+        entropy_factor -- is the contribution of the entropy term in the loss. Higher value means higher exploration.
 
-            # actor loss
-            actor_loss = (log_probs * adv).mean()
+        """
 
-            loss = -(actor_loss + entropy_factor * entropy) + critic_loss
+        discounted_r = torch.Tensor(discounted_r).to(self.model.device)
+        values = torch.Tensor(values).to(self.model.device)
+        log_probs = torch.Tensor(log_probs).to(self.model.device)
+        entropy = torch.Tensor(entropy).to(self.model.device)
 
-            # reset grads
-            self.opitmizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
+        # critic loss
+        adv = discounted_r - values
+        critic_loss = 0.5 * adv.pow(2).mean()
+
+        # actor loss
+        actor_loss = (log_probs * adv).mean()
+
+        loss = -(actor_loss + entropy_factor * entropy) + critic_loss
+
+        # reset grads
+        self.model.opitmizer.zero_grad()
+        loss.backward()
+        self.model.optimizer.step()
 
 
 # neural net class for DQN models
