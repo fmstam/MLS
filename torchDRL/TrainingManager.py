@@ -70,7 +70,7 @@ class TrainingManager:
                 # 1 and 2- reset the environement and get initial state
                 state = self.env.reset()
                 # 3 get first action
-                action = self.agent.get_action(state)
+                action = self.agent.get_policy_action(state)
                 # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
                 # the episode ends 
                 step = 0

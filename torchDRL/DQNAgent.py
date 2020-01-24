@@ -62,7 +62,7 @@ class DQNAgent(AbstractAgent):
         """
         return np.argmax(self.critic.predict(state))
     
-    def get_policy_action(self, state)
+    def get_policy_action(self, state):
         return self.get_action_epsilon_greedy(state)
 
     def get_action_epsilon_greedy(self, state):

@@ -8,7 +8,7 @@
 
 
 from MLS.examples.all_one.EnvEmptySlot import EnvEmptySlot
-from MLS.torchDRL.DNN import DNN
+from MLS.torchDRL.DNN import DQNDNN
 from MLS.torchDRL.DQNAgent import DQNAgent 
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
@@ -29,13 +29,13 @@ device = 'gpu'
 hidden_layers_sizes = [64, 64, 64]
 lr = 0.0001
 
-critic = DNN(input_shape=state_size,
+critic = DQNDNN(input_shape=state_size,
             output_shape=len(action_space),
             hidden_layers_sizes=hidden_layers_sizes,
             lr=lr,
             device=device)
 
-target_critic = DNN(input_shape=state_size,
+target_critic = DQNDNN(input_shape=state_size,
             output_shape=len(action_space),
             hidden_layers_sizes=hidden_layers_sizes,
             device=device)

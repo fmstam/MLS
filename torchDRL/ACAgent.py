@@ -12,7 +12,7 @@ __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
 from MLS.torchDRL.AbstractAgent import AbstractAgent
-from MLS.torchDRL.DNN import DNNArch
+from MLS.torchDRL.DNN import DNNACArch
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
@@ -22,17 +22,18 @@ class ACAgent(AbstractAgent):
     def __init__(self,
                  state_size,
                  action_space,
-                 actor_critic:DNNArch,
-                 epsiode_length,
+                 actor_critic:DNNACArch,
+                 episode_length,
                  discount_factor=0.99,
                  entropy_factor=0.01):
 
-        super(ACAgent, self).__init__()
+        super(ACAgent, self).__init__(state_size=state_size,
+                                    action_space=action_space)
 
         self.actor_critic = actor_critic
         self.discount_factor = discount_factor
         self.entropy_factor = entropy_factor
-        self.epsiode_length = epsiode_length
+        self.episode_length = episode_length
 
         # episode rollout storage
         self.values = []
@@ -44,21 +45,16 @@ class ACAgent(AbstractAgent):
         # get action from the distribution
         # store the outcome into the rolout storage variables
 
-        # do a forward pass on the ac network
-        v, probs = self.actor_critic.predict(state)
-        # get the action from the probs
-        action = np.random.choice(len(self.actor_critic), p=probs)
-        # calculate log(pi(action|state))
-        log_prob = np.log(probs[action])
-        # entropy
-        entropy = np.sum(probs * np.log(probs))
+        # do a forward pass on the ac network and collect output
+        v, _, action, log_probs, entropy = self.actor_critic.collect(state)
 
         # store them, 
         # the reward will be added in the learn function.
         # the reason is that the reward is not avialable now
         self.values.append(v)
-        self.log_probs.append(log_prob)
+        self.log_probs.append(log_probs)
         self.entropy += entropy
+        return action
     
     def learn(self, *args):
         """ The actual algorithm of DQN goes here
@@ -74,16 +70,32 @@ class ACAgent(AbstractAgent):
         """
 
         # unpack args
-        total_steps, episode_step, state, state_, reward, action, done, _ = args 
+        _, episode_step, _, state_, reward, _, done, _ = args 
 
         # we check if we are do, so we do a learning step,
         # otherwise, just store the reward and go on
 
-        if done:
+        if done or episode_step == self.episode_length - 1:
+            
+            # get the last value
+            if done: # terminal state
+                last_value = 0 
+            else: # predict the last value from the critic
+                last_value, _ = self.actor_critic.predict(state_)
+
             # calculate the discrounted reward
             discounted_rewards = np.zeros_like(self.values)
-            for i in range(rang(len(self.rewards))):
-
+            for i in reversed(range(len(self.rewards))):
+                last_value = self.rewards[i] + self.discount_factor * last_value
+                discounted_rewards[i] = last_value
+            
+            # update weights by calculating the loss and performing backward
+            self.actor_critic.calc_loss(discounted_r=discounted_rewards,
+                                        values=self.values,
+                                        log_probs=self.log_probs,
+                                        entropy=self.entropy,
+                                        entropy_factor=self.entropy_factor)
+            # stop the episode
         else:
             self.rewards.append(reward)
 

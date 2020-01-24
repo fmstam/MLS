@@ -147,17 +147,17 @@ class DNNACArch(nn.Module):
         self.a_output_shape = a_output_shape
         self.c_output_shape = c_output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
-        self.devide = 'cpu'
+        self.device = 'cpu'
         self.lr = lr
 
         if device is 'gpu':
-            if self.cude.is_available():
+            if torch.cuda.is_available():
                 self.device = 'cuda:0'
         
         ## models
         # actor network
         # first layer
-        self.a_layers = nn.ModuleList([nn.Linear(self.a_input_shape, self.hidden_layers_sizes[0])])
+        self.a_layers = nn.ModuleList([nn.Linear(self.input_shape, self.hidden_layers_sizes[0])])
         # other layers
         for i in range(1,len(self.hidden_layers_sizes)):
             self.a_layers.append(nn.Linear(self.hidden_layers_sizes[i-1], self.hidden_layers_sizes[i]))
@@ -165,7 +165,7 @@ class DNNACArch(nn.Module):
         self.a_layers.append(nn.Linear(self.hidden_layers_sizes[-1], self.a_output_shape))
 
         # critic network
-        self.c_layers = nn.ModuleList([nn.Linear(self.a_input_shape, self.hidden_layers_sizes[0])])
+        self.c_layers = nn.ModuleList([nn.Linear(self.input_shape, self.hidden_layers_sizes[0])])
         # hidden layers
         self.c_layers.extend([nn.Linear(self.hidden_layers_sizes[i-1], self.hidden_layers_sizes[i]) for i in range(1, len(self.hidden_layers_sizes))])
         # output layer
@@ -174,6 +174,7 @@ class DNNACArch(nn.Module):
 
         # opitmizer, the loss is defined seperately 
         self.optimizer = optim.RMSprop(self.parameters(), lr=self.lr)
+        self.loss_fun = nn.MSELoss(reduction='sum')
 
         self.to(self.device)
         
@@ -187,7 +188,9 @@ class DNNACArch(nn.Module):
             v = F.relu(self.c_layers[i](v))
 
         # generate probabilities from the last layer
-        probs = F.softmax(x)
+        probs = F.softmax(self.a_layers[-1](x))
+        # generate value from the last layer
+        v = self.c_layers[-1](v)
 
         # return value estimate from the critic and probabilty distribution from the actor
         return v, probs
@@ -220,7 +223,16 @@ class ACDNN:
 
     def predict(self, source):
         v, probs = self.model(source)
-        return v.detach().cpu.numpy(), probs.detach().cpu.numpy()
+        return v.detach().cpu().data.numpy()[0], probs.detach().cpu().numpy()
+
+    def collect(self, source):
+        v, probs = self.model(source)
+        action = torch.distributions.Categorical(probs).sample()
+        log_probs = torch.log(probs[action])
+        entropy = torch.sum(probs * torch.log(probs))
+
+        return v, probs, action, log_probs, entropy.item()
+
     
     def calc_loss(self,
                     discounted_r,
@@ -239,14 +251,14 @@ class ACDNN:
 
         """
 
-        discounted_r = torch.Tensor(discounted_r).to(self.model.device)
-        values = torch.Tensor(values).to(self.model.device)
-        log_probs = torch.Tensor(log_probs).to(self.model.device)
-        entropy = torch.Tensor(entropy).to(self.model.device)
+        discounted_r = torch.from_numpy(discounted_r).to(self.model.device)
+        values = torch.stack(values).to(self.model.device)
+        log_probs = torch.stack(log_probs).to(self.model.device)
+        #entropy = torch.Tensor(entropy).to(self.model.device)
 
         # critic loss
-        adv = discounted_r - values
-        critic_loss = 0.5 * adv.pow(2).mean()
+        adv = discounted_r - values.squeeze()
+        critic_loss = self.model.loss_fun(discounted_r, values)
 
         # actor loss
         actor_loss = (log_probs * adv).mean()
@@ -254,8 +266,8 @@ class ACDNN:
         loss = -(actor_loss + entropy_factor * entropy) + critic_loss
 
         # reset grads
-        self.model.opitmizer.zero_grad()
-        loss.backward()
+        self.model.optimizer.zero_grad()
+        actor_loss.backward()
         self.model.optimizer.step()
 
 

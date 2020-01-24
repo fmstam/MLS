@@ -16,11 +16,11 @@ from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 class AbstractAgent():
     def __init__(self,
-                 actor, 
-                 critic, 
-                 replay_memory:ReplayMemory, 
                  state_size, 
                  action_space,
+                 actor=None, 
+                 critic=None, 
+                 replay_memory=None, 
                  mini_batch_size=64):
         self.actor = actor
         self.critic = critic
