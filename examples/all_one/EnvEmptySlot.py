@@ -24,13 +24,14 @@ class EnvEmptySlot(AbstractEnvironement):
         super(EnvEmptySlot, self).__init__(state_size, action_space)
         
         self.play_ground = np.zeros(self.state_size)
-        action_space = [i for i in range(self.state_size)]
+        self.action_space = [i for i in range(self.state_size)]
+
         
     def step(self, action):
         done = 0
         extra_signals = []
         if self.play_ground[action] == 1:
-            reward = -1
+            reward = 0
         else:
             reward = 1
             self.play_ground[action] = 1

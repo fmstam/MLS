@@ -39,7 +39,7 @@ class ACAgent(AbstractAgent):
         self.values = []
         self.rewards = []
         self.log_probs = []
-        self.entropy = 0
+        self.entropy = []
 
     def get_policy_action(self, state):
         # get action from the distribution
@@ -53,7 +53,7 @@ class ACAgent(AbstractAgent):
         # the reason is that the reward is not avialable now
         self.values.append(v)
         self.log_probs.append(log_probs)
-        self.entropy += entropy
+        self.entropy.append(entropy)
         return action
     
     def learn(self, *args):
@@ -70,7 +70,7 @@ class ACAgent(AbstractAgent):
         """
 
         # unpack args
-        _, episode_step, _, state_, reward, _, done, _ = args 
+        steps, episode_step, _, state_, reward, _, done, _ = args 
 
         # we check if we are do, so we do a learning step,
         # otherwise, just store the reward and go on
@@ -84,7 +84,8 @@ class ACAgent(AbstractAgent):
                 last_value, _ = self.actor_critic.predict(state_)
 
             # calculate the discrounted reward
-            discounted_rewards = np.zeros_like(self.values)
+            self.rewards.append(reward)
+            discounted_rewards = np.zeros(len(self.values))
             for i in reversed(range(len(self.rewards))):
                 last_value = self.rewards[i] + self.discount_factor * last_value
                 discounted_rewards[i] = last_value
@@ -95,7 +96,11 @@ class ACAgent(AbstractAgent):
                                         log_probs=self.log_probs,
                                         entropy=self.entropy,
                                         entropy_factor=self.entropy_factor)
-            # stop the episode
+            # clean up
+            self.values.clear()
+            self.rewards.clear()
+            self.log_probs.clear()
+            self.entropy.clear()
         else:
             self.rewards.append(reward)
 

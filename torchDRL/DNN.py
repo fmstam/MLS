@@ -173,7 +173,7 @@ class DNNACArch(nn.Module):
 
 
         # opitmizer, the loss is defined seperately 
-        self.optimizer = optim.RMSprop(self.parameters(), lr=self.lr)
+        self.optimizer = optim.Adam(self.parameters(), lr=self.lr)
         self.loss_fun = nn.MSELoss(reduction='sum')
 
         self.to(self.device)
@@ -184,13 +184,13 @@ class DNNACArch(nn.Module):
         x = torch.Tensor(observation).to(self.device)
         v = torch.Tensor(observation).to(self.device)
         for i in range(len(self.hidden_layers_sizes)):
-            x = F.relu(self.a_layers[i](x))
+            x = F.tanh(self.a_layers[i](x))
             v = F.relu(self.c_layers[i](v))
 
         # generate probabilities from the last layer
         probs = F.softmax(self.a_layers[-1](x))
         # generate value from the last layer
-        v = self.c_layers[-1](v)
+        v = self.c_layers[-1](v)[0]
 
         # return value estimate from the critic and probabilty distribution from the actor
         return v, probs
@@ -223,15 +223,16 @@ class ACDNN:
 
     def predict(self, source):
         v, probs = self.model(source)
-        return v.detach().cpu().data.numpy()[0], probs.detach().cpu().numpy()
+        return v.detach().cpu().item(), probs.detach().cpu().numpy()
 
     def collect(self, source):
         v, probs = self.model(source)
-        action = torch.distributions.Categorical(probs).sample()
-        log_probs = torch.log(probs[action])
-        entropy = torch.sum(probs * torch.log(probs))
+        dist = torch.distributions.Categorical(probs)
+        action = dist.sample()
+        log_probs = dist.log_prob(action)
+        entropy = dist.entropy().mean()
 
-        return v, probs, action, log_probs, entropy.item()
+        return v, dist, action.cpu().detach().item(), log_probs, entropy
 
     
     def calc_loss(self,
@@ -254,20 +255,20 @@ class ACDNN:
         discounted_r = torch.from_numpy(discounted_r).to(self.model.device)
         values = torch.stack(values).to(self.model.device)
         log_probs = torch.stack(log_probs).to(self.model.device)
-        #entropy = torch.Tensor(entropy).to(self.model.device)
+        entropy = torch.stack(entropy).sum().to(self.model.device)
 
         # critic loss
-        adv = discounted_r - values.squeeze()
-        critic_loss = self.model.loss_fun(discounted_r, values)
+        adv = discounted_r.detach() - values
+        critic_loss = 0.5 * adv.pow(2).mean()
 
         # actor loss
-        actor_loss = (log_probs * adv).mean()
+        actor_loss = -(log_probs * adv.detach()).mean()
 
-        loss = -(actor_loss + entropy_factor * entropy) + critic_loss
+        loss = actor_loss + entropy_factor * entropy + critic_loss
 
         # reset grads
         self.model.optimizer.zero_grad()
-        actor_loss.backward()
+        loss.backward()
         self.model.optimizer.step()
 
 

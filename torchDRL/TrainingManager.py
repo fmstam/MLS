@@ -73,7 +73,7 @@ class TrainingManager:
                 action = self.agent.get_policy_action(state)
                 # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
                 # the episode ends 
-                step = 0
+                step = 1
                 epsiode_done = False
                 episode_reward = 0
                 actions_list =[]
