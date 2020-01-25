@@ -9,7 +9,7 @@
 # use this template file to create any scenario
 
 
-from MLS.examples.all_one.EnvEmptySlot import EnvEmptySlot
+from MLS.examples.all_one.EnvEmptySlot_AC import EnvEmptySlot_AC
 from MLS.torchDRL.DNN import ACDNN
 from MLS.torchDRL.ACAgent import ACAgent
 import gym
@@ -24,14 +24,14 @@ import numpy as np
 # env, state and action
 
 # we can use gym environment 
-env = gym.make("CartPole-v1")
-state_size = env.observation_space.shape[0]
-action_space = [i for i in range(env.action_space.n)]
+#env = gym.make("CartPole-v1")
+#state_size = env.observation_space.shape[0]
+#action_space = [i for i in range(env.action_space.n)]
 
 # or our simplified environement class
-#env = EnvEmptySlot(state_size=5)
-#state_size = env.state_size
-#action_space = env.action_space
+env = EnvEmptySlot_AC(state_size=5)
+state_size = env.state_size
+action_space = env.action_space
 
 state_type = np.int16
 action_type = np.int16
