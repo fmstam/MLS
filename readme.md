@@ -29,10 +29,10 @@ It is simple, see the example in `scenario.py`. You need to subclass the abstrac
  ### 2- Double DQN (included)
  ### 3- Deuling Double DQN (included)
  ### 4- Actor-Critic (A2C) with n-steps (included)
+ ### 8*- Deep Deterministic Policy Gradient (DDPG) (in progress - I priortized it for my research)
  ### 5 - DQN with Prioritized Experience Replay (in progress)
- ### 7 - DQN with LSTM (queued)
- ### 6- Actor-Critic for continouse action space (queued)
- ### 7- Deep Deterministic Policy Gradient (DDPG) (queued)
+ ### 6 - DQN with LSTM (queued)
+ ### 7 - TD3 (queued)
 
  
  
