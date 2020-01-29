@@ -24,14 +24,14 @@ import numpy as np
 # env, state and action
 
 # we can use gym environment 
-#env = gym.make("CartPole-v1")
-#state_size = env.observation_space.shape[0]
-#action_space = [i for i in range(env.action_space.n)]
+env = gym.make("CartPole-v1")
+state_size = env.observation_space.shape[0]
+action_space = [i for i in range(env.action_space.n)]
 
 # or our simplified environement class
-env = EnvEmptySlot_AC(state_size=5)
-state_size = env.state_size
-action_space = env.action_space
+# env = EnvEmptySlot_AC(state_size=15)
+# state_size = env.state_size
+# action_space = env.action_space
 
 state_type = np.int16
 action_type = np.int16
@@ -45,7 +45,7 @@ log_file = 'scenario_name_log_file.txt'
 
 # neural nets
 device = 'gpu'
-hidden_layers_sizes = [64, 64]
+hidden_layers_sizes = [128, 128]
 lr = 0.001
 
 actor_critic = ACDNN(input_shape=state_size,

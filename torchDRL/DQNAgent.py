@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 """ 
     Implementaion of Deep Q network algorithm
+    This class implements both DQN and Double DQN
+     since they difference is just the calcualtion of the traget in the calculation of
+    the mean square Bellman error.
+    In addition, this class can easily carry out the Deuling DQN. What we need to change 
+    is the DNN, in another class, see class DQNDNN in DNN.py.
 """
 __author__ = "AL-Tam Faroq"
 __copyright__ = "Copyright 2020, UALG"
@@ -110,19 +115,18 @@ class DQNAgent(AbstractAgent):
             state, state_, reward, action, done = self.replay_memory.sample() 
 
             # 3- core learning steps. 
-            
             Q_state = self.critic.predict(state) # current state prediction from online network Q(s, a; \theta) 
             Q_state_ = self.target_critic.predict(state_) # next state prediction from the target critic Q(s', a; \theta^-)
 
             # we can replace the following loop by a single line via broadcasting, 
-            # but I prefere it be explicit here to describe the actual mathematical equation
+            # but I prefere it be explicit for equation-code readability
             for i in range(self.mini_batch_size):
                 # we have two cases, 1) state_ is terminal 2) state_ is not terminal
                 # if state_ is terminal 
                 if done[i] == 1:
                     Q_state[i, action[i]] = reward[i]
                 else: 
-                    # here we which DQN variant the agent will follow, 
+                    # here we use the DQN variant the agent will follow, 
                     # not the best approach but is informative
                     if self.use_double: # use Double DQN
                         act = np.argmax(Q_state_[i,:])

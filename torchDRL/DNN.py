@@ -11,15 +11,17 @@ __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
    
+
+# torch stuff
 import torch   
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-
+# numpy
 import numpy as np
 
-class DNNArch(nn.Module):
+class GenericDNNArch(nn.Module)
     def __init__(self,
                  input_shape, 
                  output_shape, 
@@ -27,7 +29,7 @@ class DNNArch(nn.Module):
                  device='cpu', 
                  lr=1e-4):
         
-        super(DNNArch, self).__init__()
+        super(GenericDNNArch, self).__init__()
         self.input_shape = input_shape
         self.output_shape = output_shape
         self.hidden_layers_sizes = hidden_layers_sizes
@@ -63,15 +65,33 @@ class DNNArch(nn.Module):
         for i in range(len(self.layers)-1):
             x = F.relu(self.layers[i](x))
 
-        # output layer   
-        actions = F.softmax(self.layers[-1](x))
-
-        return actions # actions
+        return x # actions
     
-
     def summary(self):
         print(self)
 
+class DNNArch(GenericDNNArch):
+    def __init__(self,
+                 input_shape, 
+                 output_shape, 
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4)
+
+    super(DNNArch, self).__init__(input_shape=input_shape,
+                                  output_shape=output_shape,
+                                  hidden_layers_sizes=hidden_layers_sizes,
+                                  device=device,
+                                  lr=lr)
+
+    # we keep default loss and optimizer here
+
+    def forward(self, x)
+    # output layer   
+        x = super.forward(x)
+        actions = F.softmax(self.layers[-1](x))
+    return actions
+    
 
 class DNNDeulingArch(nn.Module):
     def __init__(self,
@@ -133,6 +153,7 @@ class DNNDeulingArch(nn.Module):
         print(self)
 
 
+# combined actor critic DNN
 class DNNACArch(nn.Module):
     def __init__(self,
                  input_shape, 
@@ -195,7 +216,89 @@ class DNNACArch(nn.Module):
         # return value estimate from the critic and probabilty distribution from the actor
         return v, probs
 
+# actor DNN
+class Actor(GenericDNNArch):
+    def __init__(self,
+                 input_shape,
+                 output_shape,
+                 hidden_layers_sizes,
+                 lr=1e-4,
+                 device='cpu'
+                ):
+        super(DNNArch, self).__init__(input_shape=input_shape,
+                                  output_shape=output_shape,
+                                  hidden_layers_sizes=hidden_layers_sizes,
+                                  device=device,
+                                  lr=lr)
+        self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
+
+
+# critic DNN
+
+##################################### warpers #########################
+# neural net class for DQN models
+class DQNDNN:
+    def __init__(self,
+                 input_shape, 
+                 output_shape, 
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=1e-4):
+        self.input_shape = input_shape
+        self.output_shape = output_shape
+        self.hidden_layers_sizes = hidden_layers_sizes
+        self.device = device
+        self.lr = lr
+
+        # change only this line to include any different architecture in pytorch
+        # we have two architecture DNNArch and DNNDeulingArch.
+        self.model = DNNDeulingArch(input_shape=self.input_shape,
+                             output_shape=self.output_shape, 
+                             hidden_layers_sizes=self.hidden_layers_sizes, 
+                             device=self.device,
+                             lr=self.lr)
+
+    def summary(self):
+        self.model.summary()
+
+    def predict(self, source):
+        return self.model(source).detach().cpu().numpy()
     
+
+    def fit(self, source, y, epochs=1):
+        y_pred = self.model(source)
+        loss = self.model.loss_fun(y_pred, torch.Tensor(y).to(self.model.device))
+        self.model.optimizer.zero_grad()
+        loss.backward()
+        self.model.optimizer.step()
+
+    def to_model_device(self, x):
+        """ place a variable into the same device as the model    
+
+        keyword arguments:
+        x -- a variable
+
+        return:
+        A platform dependant variable placed in the same device as the model
+        """
+
+        x = torch.Tensor(x)
+        x.to(self.model.device)
+        return x
+
+    def update_weights(self, dnn, smoothing=False, smoothing_factor=1e-3):
+        """ Copy weights from another DNN
+         
+        keyword arguments:
+        dnn -- another DNN must use the same lib, e.g., 
+        smoothing -- if true the the weights are updated with a smoothing  factor
+        smoothing_factor -- used if smoothing is true
+        """
+        if not smoothing:
+            self.model.load_state_dict(dnn.model.state_dict())
+        else:
+            for param1, param2 in zip(self.model.parameters(), dnn.model.parameters()):
+                param1.data.copy_(smoothing_factor * param1 + (1 - smoothing_factor) * param2)
 
 # neual net class for Actor-critic agents
 class ACDNN:
@@ -270,72 +373,7 @@ class ACDNN:
         self.model.optimizer.zero_grad()
         loss.backward()
         self.model.optimizer.step()
-
-
-# neural net class for DQN models
-class DQNDNN:
-    def __init__(self,
-                 input_shape, 
-                 output_shape, 
-                 hidden_layers_sizes=[16, 16], 
-                 device='cpu', 
-                 lr=1e-4):
-        self.input_shape = input_shape
-        self.output_shape = output_shape
-        self.hidden_layers_sizes = hidden_layers_sizes
-        self.device = device
-        self.lr = lr
-
-        # change only this line to include any different architecture in pytorch
-        # we have two architecture DNNArch and DNNDeulingArch.
-        self.model = DNNDeulingArch(input_shape=self.input_shape,
-                             output_shape=self.output_shape, 
-                             hidden_layers_sizes=self.hidden_layers_sizes, 
-                             device=self.device,
-                             lr=self.lr)
-
-    def summary(self):
-        self.model.summary()
-
-    def predict(self, source):
-        return self.model(source).detach().cpu().numpy()
-    
-
-    def fit(self, source, y, epochs=1):
-        y_pred = self.model(source)
-        loss = self.model.loss_fun(y_pred, torch.Tensor(y).to(self.model.device))
-        self.model.optimizer.zero_grad()
-        loss.backward()
-        self.model.optimizer.step()
-
-    def to_model_device(self, x):
-        """ place a variable into the same device as the model    
-
-        keyword arguments:
-        x -- a variable
-
-        return:
-        A platform dependant variable placed in the same device as the model
-        """
-
-        x = torch.Tensor(x)
-        x.to(self.model.device)
-        return x
-
-    def update_weights(self, dnn, smoothing=False, smoothing_factor=1e-3):
-        """ Copy weights from another DNN
          
-        keyword arguments:
-        dnn -- another DNN must use the same lib, e.g., 
-        smoothing -- if true the the weights are updated with a smoothing  factor
-        smoothing_factor -- used if smoothing is true
-        """
-        if not smoothing:
-            self.model.load_state_dict(dnn.model.state_dict())
-        else:
-            for param1, param2 in zip(self.model.parameters(), dnn.model.parameters()):
-                param1.data.copy_(smoothing_factor * param1 + (1 - smoothing_factor) * param2)
-             
 if __name__ == "__main__":
     # execute only if run as a script
     pass
