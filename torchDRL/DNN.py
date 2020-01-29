@@ -21,7 +21,7 @@ import torch.optim as optim
 # numpy
 import numpy as np
 
-class GenericDNNArch(nn.Module)
+class GenericDNNArch(nn.Module):
     def __init__(self,
                  input_shape, 
                  output_shape, 
@@ -216,6 +216,8 @@ class DNNACArch(nn.Module):
         # return value estimate from the critic and probabilty distribution from the actor
         return v, probs
 
+
+####################### seperated actor critic classes
 # actor DNN
 class Actor(GenericDNNArch):
     def __init__(self,
@@ -225,15 +227,44 @@ class Actor(GenericDNNArch):
                  lr=1e-4,
                  device='cpu'
                 ):
-        super(DNNArch, self).__init__(input_shape=input_shape,
+        super(Actor, self).__init__(input_shape=input_shape,
+                                  output_shape=output_shape,
+                                  hidden_layers_sizes=hidden_layers_sizes,
+                                  device=device,
+                                  lr=lr)
+        # optimizer
+        self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
+
+    def forward(self, x):
+        x = super.forward(x)
+        # we need to squash the output to -1 and +1 domain
+        # when testing the agent we can relax the output to fit
+        # the environement action space, see https://github.com/openai/gym/blob/master/gym/core.py
+        # for action wraping
+
+        actions = nn.functional.tanh(x)
+        return actions
+# critic DNN
+class Critic(GenericDNNArch):
+    def __init__(self,
+                input_shape,
+                output_shape,
+                hidden_layers_sizes,
+                lr=1e-4,
+                device='cpu'
+            ):
+        super(Critic, self).__init__(input_shape=input_shape,
                                   output_shape=output_shape,
                                   hidden_layers_sizes=hidden_layers_sizes,
                                   device=device,
                                   lr=lr)
         self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
+    # eveything else is the same for the generic
 
 
-# critic DNN
+
+
+
 
 ##################################### warpers #########################
 # neural net class for DQN models
