@@ -507,17 +507,6 @@ class DDPGDNN:
             for param1, param2 in zip(self.actor_target.parameters(), self.actor.parameters()):
                 param1.data.copy_(smoothing_factor * param2 + (1 - smoothing_factor) * param1)
             
-            
-
-
-
-
-
-        
-        
-
-        
-
 
                 
 if __name__ == "__main__":
