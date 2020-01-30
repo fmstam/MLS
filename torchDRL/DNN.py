@@ -21,6 +21,9 @@ import torch.optim as optim
 # numpy
 import numpy as np
 
+
+
+
 class GenericDNNArch(nn.Module):
     def __init__(self,
                  input_shape, 
@@ -92,7 +95,6 @@ class DNNArch(GenericDNNArch):
         actions = F.softmax(self.layers[-1](x))
     return actions
     
-
 class DNNDeulingArch(nn.Module):
     def __init__(self,
                  input_shape, 
@@ -151,7 +153,6 @@ class DNNDeulingArch(nn.Module):
 
     def summary(self):
         print(self)
-
 
 # combined actor critic DNN
 class DNNACArch(nn.Module):
@@ -216,7 +217,6 @@ class DNNACArch(nn.Module):
         # return value estimate from the critic and probabilty distribution from the actor
         return v, probs
 
-
 ####################### seperated actor critic classes
 # actor DNN
 class Actor(GenericDNNArch):
@@ -260,10 +260,6 @@ class Critic(GenericDNNArch):
                                   lr=lr)
         self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
     # eveything else is the same for the generic
-
-
-
-
 
 
 ##################################### warpers #########################
@@ -404,7 +400,126 @@ class ACDNN:
         self.model.optimizer.zero_grad()
         loss.backward()
         self.model.optimizer.step()
+
+# DDGP DNN wrapper
+class DDPGDNN:
+    """ Impelement the computional steps of the DDPG algorithm.
+    It contains everything related to DNN and their update to simplify the agent classes.
+    """
+    def __init__(self,
+                 state_size,
+                 action_size, # number of actions
+                 hidden_layers_sizes=[16, 16], 
+                 device='cpu', 
+                 lr=[1e-4,1e-4]): # lr for actior and critic 
+        self.state_size = state_size
+        self.actions_upper = actions_upper
+        self.hidden_layers_sizes = hidden_layers_sizes
+        self.device = device
+        self.lr = lr
+
+        # actor 
+        self.actor = Actor(input_shape=state_size,
+                           output_shape=action_size,
+                            hidden_layers_sizes=hidden_layers_sizes,
+                            lr=lr[0],
+                            device=device)
+        self.actor_target = Actor(input_shape=state_size,
+                           output_shape=action_size,
+                            hidden_layers_sizes=hidden_layers_sizes,
+                            lr=lr[0],
+                            device=device)
+        # critic
+        self.critic = Critic(input_shape=state_size + action_size,
+                            output_shape=action_size,
+                            hidden_layers_sizes=hidden_layers_sizes,
+                            lr=lr[1],
+                            device=device)
+        self.critic_target = Critic(input_shape=state_size + action_size,
+                            output_shape=action_size,
+                            hidden_layers_sizes=hidden_layers_sizes,
+                            lr=lr[1],
+                            device=device)
+        
+
+    def train_critic(self, states, actions, rewards, next_states, dones, discount_factor):
+        """ Calculate the critic loss function and fit the state and apply one optimizer learning step.
+        The model being used is the critic_target.
+        
+        keyword arguement:
+        state -- current state numpy array sampled from the replymemory in the agent class
+        actions -- actions mumpy array also sampled from the replaymemory in the agent class
+        rewards -- rewards ....
+        next_states -- next state ....
+        dones -- dones ....
+        discount_factor -- \gamma in the equation
+        """
+        
+        # calculate the loss:
+        
+        # Q values from the critic
+        Q_critic = self.critic(states, actions)
+        # actions from the actor
+        actions_actor = self.actor_target(states)
+        # Q values from the target critic using actions_actor
+        Q_taget_critic = self.critic_target(next_states, actions_actor.detach())
+         # we detach actions_actor to remove it from the computional graph of the target critic
+        # calculate y 
+        y = rewards + (1 - dones) * discount_factor * Q_critic_target
+
+        # loss function
+        cirtic_loss = nn.MSELoss(Q_critic, y) # mean squared belman error (MSBE)
+
+        # optimize
+        self.critic.optimizer.zero_grad()
+        critic_loss.backward()
+        self.critic.optimizer.step()
+
+
+    def train_actor(self, states):
+        """ Train the actor using current states.
+            We are trying to maximize the output of the Q_critic network at the action 
+            selected by the actor network 
+        """
+
+        actor_loss = - self.critic(states, self.actor(states))
+
+        self.actor.optimizer.zero_grad()
+        actor_loss.backward()
+        self.actor.optimizer.step()
+    
+    def update_actor_critic(self, smoothing=False, smoothing_factor=1e-3):
+
+        """ Copy weights from another DNN
          
+        keyword arguments:
+        dnn -- another DNN must use the same lib, e.g., 
+        smoothing -- if true the the weights are updated with a smoothing  factor
+        smoothing_factor -- used if smoothing is true
+        """
+        if not smoothing:
+            self.critic_target.load_state_dict(self.critic.state_dict())
+            self.actor_target.load_state_dict(self.actor.state_dict())
+        else:
+            for param1, param2 in zip(self.critic_target.parameters(), self.critic.parameters()):
+                param1.data.copy_(smoothing_factor * param2 + (1 - smoothing_factor) * param1)
+
+            for param1, param2 in zip(self.actor_target.parameters(), self.actor.parameters()):
+                param1.data.copy_(smoothing_factor * param2 + (1 - smoothing_factor) * param1)
+            
+            
+
+
+
+
+
+        
+        
+
+        
+
+
+                
 if __name__ == "__main__":
     # execute only if run as a script
     pass
