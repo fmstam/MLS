@@ -440,7 +440,11 @@ class DDPGDNN:
                             hidden_layers_sizes=hidden_layers_sizes,
                             lr=lr[1],
                             device=device)
-        
+
+    def predict(self, state):
+        """ Predict output from the actor and return a numpy array
+        """
+        return self.actor(state).detach.cpu().numpy()
 
     def train_critic(self, states, actions, rewards, next_states, dones, discount_factor):
         """ Calculate the critic loss function and fit the state and apply one optimizer learning step.
@@ -506,7 +510,7 @@ class DDPGDNN:
 
             for param1, param2 in zip(self.actor_target.parameters(), self.actor.parameters()):
                 param1.data.copy_(smoothing_factor * param2 + (1 - smoothing_factor) * param1)
-            
+        
 
                 
 if __name__ == "__main__":

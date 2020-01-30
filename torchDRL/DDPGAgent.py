@@ -22,12 +22,25 @@ class DDPGAgent(AbstractAgent):
                  state_size,
                  action_space, # 2 X number of actions matrix (i.e., upper and lower bounds of each action)
                  neural_net_wrapper:DDPGDNN, # actor-critic network wrapper
-                 replay_memroy: ReplayMemory,
+                 replay_memory: ReplayMemory,
                  discount_factor=0.99,
+                 use_smoothing=True, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
                  smoothing_frequency=20, 
                  smoothing_factor=1e-3,
                  mini_batch_size=64):
+
         super(DDPGAgent, self).__init__(state_size=state_size,
                                         action_space=action_space,
                                         replay_memory=replay_memory,
                                         mini_batch_size=mini_batch_size)
+        self.nn_wraper = neural_net_wrapper
+
+    # the policy action
+    def get_action(self, state):
+        return self.nn_wraper.predict(state)
+
+    def get_policy_action(self, state):
+        return self.get_action(state)
+    
+
+
