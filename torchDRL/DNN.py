@@ -65,7 +65,7 @@ class GenericDNNArch(nn.Module):
         x = torch.Tensor(observation).to(self.device)
 
         # forward loop
-        for i in range(len(self.layers)-1):
+        for i in range(len(self.layers)):
             x = F.relu(self.layers[i](x))
 
         return x # actions
@@ -236,13 +236,13 @@ class Actor(GenericDNNArch):
         self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
 
     def forward(self, x):
-        x = super.forward(x)
+        x = super(Actor, self).forward(x)
         # we need to squash the output to -1 and +1 domain
         # when testing the agent we can relax the output to fit
         # the environement action space, see https://github.com/openai/gym/blob/master/gym/core.py
         # for action wraping
 
-        actions = nn.functional.tanh(x)
+        actions = torch.tanh(x)
         return actions
 # critic DNN
 class Critic(GenericDNNArch):
@@ -429,6 +429,7 @@ class DDPGDNN:
                             hidden_layers_sizes=hidden_layers_sizes,
                             lr=lr[0],
                             device=device)
+
         # critic
         self.critic = Critic(input_shape=state_size + action_size,
                             output_shape=action_size,
@@ -444,7 +445,7 @@ class DDPGDNN:
     def predict_actor(self, state):
         """ Predict output from the actor and return a numpy array
         """
-        return self.actor(state).detach.cpu().numpy()
+        return self.actor(state).detach().cpu().numpy()
 
     def train_critic(self, states, actions, rewards, next_states, dones, discount_factor):
 
@@ -461,19 +462,26 @@ class DDPGDNN:
         """
         
         # calculate the loss:
-        
+        rewards = torch.Tensor(rewards).to(self.critic.device)
+        dones = torch.Tensor(dones).to(self.critic.device)
+      
         # Q values from the critic
-        Q_critic = self.critic(states, actions)
+        critic_state = np.concatenate((states, np.expand_dims(actions,axis=1)), axis=1)
+        Q_critic = self.critic(critic_state)
         # actions from the actor
         actions_actor = self.actor_target(states)
+
+        critic_target_state = np.concatenate((next_states, actions_actor.detach().cpu().numpy()), axis=1)
         # Q values from the target critic using actions_actor
-        Q_taget_critic = self.critic_target(next_states, actions_actor.detach())
+        Q_taget_critic = self.critic_target(critic_target_state)
          # we detach actions_actor to remove it from the computional graph of the target critic
+
+
         # calculate y 
-        y = rewards + (1 - dones) * discount_factor * Q_taget_critic
+        y = rewards + (1 - dones) * discount_factor * Q_taget_critic.squeeze()
 
         # loss function
-        cirtic_loss = nn.MSELoss(Q_critic, y) # mean squared belman error (MSBE)
+        cirtic_loss = (Q_critic.squeeze() - y).pow(2).mean() # mean squared belman error (MSBE)
 
         # optimize
         self.critic.optimizer.zero_grad()

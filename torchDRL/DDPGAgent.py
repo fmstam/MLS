@@ -39,14 +39,14 @@ class DDPGAgent(AbstractAgent):
         self.nn_wrapper = neural_net_wrapper
         self.noise = OUNoise(self.action_space) # noise term
         self.action_wrapper = ActionWrapper(self.action_space) # action wrapper 
+        
+        self.discount_factor = discount_factor
 
         self.use_smoothing = use_smoothing
         self.smoothing_frequency = smoothing_frequency
         self.smoothing_factor = smoothing_factor
         
-
-
-        self.step = 0 # current step in the episode
+        self.step = 0 # current step in the episode used in noising the action,
         
 
     # the policy action
@@ -94,10 +94,10 @@ class DDPGAgent(AbstractAgent):
         if total_steps > self.replay_memory.batch_size:
             # 2- sample random mini_batch
             state, state_, reward, action, done = self.replay_memory.sample() 
-            self.nn_wrapper.train_critic(state, action, reward, )            
+            self.nn_wrapper.train_critic(state, action, reward, state_, done, self.discount_factor)            
             # Update the target critic weights accroding to smoothing_frequency
             if total_steps % self.smoothing_frequency == 0:
-                self.nn_wrapper.update_targets(self.critic, smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
+                self.nn_wrapper.update_targets(smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
       
 
     

@@ -1,7 +1,8 @@
 import sys
 sys.path.append("..")
 
-from MLS.examples.all_one import scenario_ac as s
+from MLS.examples.all_one import scenario_ddpg as s
+
 from MLS.torchDRL.TrainingManager import TrainingManager as TM
 
 import timeit

@@ -3,20 +3,22 @@
 
 
 import torch 
+import numpy as np
 
 
-class Test(torch.nn.ModuleList):
-    def __init__(self):
-        super(Test, self).__init__()
-        self.fc1 = torch.nn.Linear(2, 1)
-    
-    def forward(self, x):
-        obs = torch.Tensor(x)
-        y =  torch.nn.functional.relu(self.fc1(obs))
-        return y
+
 
 if __name__ is '__main__':
-    t = Test()
-    t([10, 20])
+    a = np.array([[ 0.12358109, -0.9923345 ,  0.22797763],
+       [-0.6561437 ,  0.75463593,  1.9027297 ],
+       [-0.72913426,  0.6843707 , -3.3165429 ],
+       [-0.7543768 ,  0.6564416 ,  0.9942609 ],
+       [ 0.02537189, -0.9996781 , -1.3757801 ]], dtype=np.float32)
+
+    b = np.array([-0.5227407 ,  1.7110571 ,  1.8942035 ,  2.437542  ,  0.18703152], dtype=np.float32)
 
 
+
+
+    c = np.concatenate((a,np.expand_dims(b, axis=1)), axis=1)
+    print(c)

@@ -46,7 +46,7 @@ critic.summary()
 replay_memory = ReplayMemory(state_type=state_type,
                              action_type=action_type,
                              state_size=state_size,
-                             action_size=len(action_space),)
+                             action_size=len(action_space))
 
 # agent
 delta_epsilon=1e-3
