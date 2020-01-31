@@ -79,9 +79,9 @@ class DNNArch(GenericDNNArch):
                  output_shape, 
                  hidden_layers_sizes=[16, 16], 
                  device='cpu', 
-                 lr=1e-4)
+                 lr=1e-4):
 
-    super(DNNArch, self).__init__(input_shape=input_shape,
+        super(DNNArch, self).__init__(input_shape=input_shape,
                                   output_shape=output_shape,
                                   hidden_layers_sizes=hidden_layers_sizes,
                                   device=device,
@@ -89,11 +89,11 @@ class DNNArch(GenericDNNArch):
 
     # we keep default loss and optimizer here
 
-    def forward(self, x)
+    def forward(self, x):
     # output layer   
         x = super.forward(x)
         actions = F.softmax(self.layers[-1](x))
-    return actions
+        return actions
     
 class DNNDeulingArch(nn.Module):
     def __init__(self,
@@ -233,7 +233,7 @@ class Actor(GenericDNNArch):
                                   device=device,
                                   lr=lr)
         # optimizer
-        self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
 
     def forward(self, x):
         x = super.forward(x)
@@ -258,7 +258,7 @@ class Critic(GenericDNNArch):
                                   hidden_layers_sizes=hidden_layers_sizes,
                                   device=device,
                                   lr=lr)
-        self.optimizer = torch.optim.adam(self.parameters(), rl=rl)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
     # eveything else is the same for the generic
 
 
@@ -441,7 +441,7 @@ class DDPGDNN:
                             lr=lr[1],
                             device=device)
 
-    def predict(self, state):
+    def predict_actor(self, state):
         """ Predict output from the actor and return a numpy array
         """
         return self.actor(state).detach.cpu().numpy()
@@ -492,9 +492,9 @@ class DDPGDNN:
         actor_loss.backward()
         self.actor.optimizer.step()
     
-    def update_actor_critic(self, smoothing=False, smoothing_factor=1e-3):
+    def update_targets(self, smoothing=False, smoothing_factor=1e-3):
 
-        """ Copy weights from another DNN
+        """ Copy weights to target actor and critic
          
         keyword arguments:
         dnn -- another DNN must use the same lib, e.g., 

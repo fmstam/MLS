@@ -14,6 +14,8 @@ __status__ = "Production"
 
 from MLS.torchDRL.AbstractAgent import AbstractAgent
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
+from MLS.torchDRL.utl.OUNoise import OUNoise 
+from MLS.torchDRL.utl.ActionWrapper import ActionWrapper
 from MLS.torchDRL.DNN import DDPGDNN as DDPGDNN # DNN stuff are handeled here
 
 
@@ -33,14 +35,71 @@ class DDPGAgent(AbstractAgent):
                                         action_space=action_space,
                                         replay_memory=replay_memory,
                                         mini_batch_size=mini_batch_size)
-        self.nn_wraper = neural_net_wrapper
+
+        self.nn_wrapper = neural_net_wrapper
+        self.noise = OUNoise(self.action_space) # noise term
+        self.action_wrapper = ActionWrapper(self.action_space) # action wrapper 
+
+        self.use_smoothing = use_smoothing
+        self.smoothing_frequency = smoothing_frequency
+        self.smoothing_factor = smoothing_factor
+        
+
+
+        self.step = 0 # current step in the episode
+        
 
     # the policy action
     def get_action(self, state):
-        return self.nn_wraper.predict(state)
+        return self.nn_wrapper.predict_actor(state)
 
     def get_policy_action(self, state):
-        return self.get_action(state)
+        """
+        Get policy action, add noise and map it to the correct action space.
+        """
+        actions =  self.get_action(state) # get action from actor
+        actions = self.noise.get_action(actions, self.step) # add noise term
+        actions = self.action_wrapper.wrap_action(actions) # map action to correct space
+
+        return actions # note we can have more than one action 
+
+    
+
+    def learn(self, *args):
+        """ learn from a reply memory
+        
+        Keyword arguments:
+        *arg -- an experience sequence sent from the episode manageer. 
+        It should be unpacked to with this order: 
+
+            step: the step in the episode
+            state: the current state 
+            state_: next state
+            reward: the reward 
+            done: if it was a terminal state
+            extras: any application dependant observations, 
+                usually it is None and is ignored
+        """
+
+        # unpack args
+        total_steps, episode_step, state, state_, reward, action, done, _ = args 
+
+        # algorithm steps
+
+        self.step = episode_step # keep track of step to use it in action noising
+        # 1- store the experience into the memory
+        self.replay_memory.remember(state, state_, reward, action, done)
+
+        # train only when there is enough data in the reply memory
+        if total_steps > self.replay_memory.batch_size:
+            # 2- sample random mini_batch
+            state, state_, reward, action, done = self.replay_memory.sample() 
+            self.nn_wrapper.train_critic(state, action, reward, )            
+            # Update the target critic weights accroding to smoothing_frequency
+            if total_steps % self.smoothing_frequency == 0:
+                self.nn_wrapper.update_targets(self.critic, smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)
+      
+
     
 
 
