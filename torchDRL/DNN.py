@@ -413,7 +413,7 @@ class DDPGDNN:
                  device='cpu', 
                  lr=[1e-4,1e-4]): # lr for actior and critic 
         self.state_size = state_size
-        self.actions_upper = actions_upper
+        self.action_size = action_size
         self.hidden_layers_sizes = hidden_layers_sizes
         self.device = device
         self.lr = lr
@@ -447,6 +447,7 @@ class DDPGDNN:
         return self.actor(state).detach.cpu().numpy()
 
     def train_critic(self, states, actions, rewards, next_states, dones, discount_factor):
+
         """ Calculate the critic loss function and fit the state and apply one optimizer learning step.
         The model being used is the critic_target.
         
@@ -456,7 +457,7 @@ class DDPGDNN:
         rewards -- rewards ....
         next_states -- next state ....
         dones -- dones ....
-        discount_factor -- \gamma in the equation
+        discount_factor -- gamma in the equation
         """
         
         # calculate the loss:
@@ -469,14 +470,14 @@ class DDPGDNN:
         Q_taget_critic = self.critic_target(next_states, actions_actor.detach())
          # we detach actions_actor to remove it from the computional graph of the target critic
         # calculate y 
-        y = rewards + (1 - dones) * discount_factor * Q_critic_target
+        y = rewards + (1 - dones) * discount_factor * Q_taget_critic
 
         # loss function
         cirtic_loss = nn.MSELoss(Q_critic, y) # mean squared belman error (MSBE)
 
         # optimize
         self.critic.optimizer.zero_grad()
-        critic_loss.backward()
+        cirtic_loss.backward()
         self.critic.optimizer.step()
 
 
