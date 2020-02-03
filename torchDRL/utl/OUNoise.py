@@ -7,16 +7,16 @@
 import numpy as np
 
 class OUNoise(object):
-    def __init__(self, action_space, mu=0.0, theta=0.15, max_sigma=0.3, min_sigma=0.3, decay_period=100000):
+    def __init__(self, action_dim, low, high , mu=0.0, theta=0.15, max_sigma=0.3, min_sigma=0.3, decay_period=100000):
         self.mu           = mu
         self.theta        = theta
         self.sigma        = max_sigma
         self.max_sigma    = max_sigma
         self.min_sigma    = min_sigma
         self.decay_period = decay_period
-        self.action_dim   = len(action_space)
-        self.low          = action_space[:, 0]
-        self.high         = action_space[:, 1]
+        self.action_dim   = action_dim
+        self.low          = low
+        self.high         = high
         self.reset()
         
     def reset(self):

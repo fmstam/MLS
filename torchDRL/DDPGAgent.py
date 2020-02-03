@@ -27,9 +27,9 @@ class DDPGAgent(AbstractAgent):
                  replay_memory: ReplayMemory,
                  discount_factor=0.99,
                  use_smoothing=True, # true to use the Polyak averaging: weights = weights * \beta + (1 - \beta) new_weights
-                 smoothing_frequency=20, 
-                 smoothing_factor=1e-3,
-                 mini_batch_size=64):
+                 smoothing_frequency=1, 
+                 smoothing_factor=1e-2,
+                 mini_batch_size=128):
 
         super(DDPGAgent, self).__init__(state_size=state_size,
                                         action_space=action_space,
@@ -37,7 +37,7 @@ class DDPGAgent(AbstractAgent):
                                         mini_batch_size=mini_batch_size)
 
         self.nn_wrapper = neural_net_wrapper
-        self.noise = OUNoise(self.action_space) # noise term
+        self.noise = OUNoise(action_dim=len(self.action_space), low=-1.0, high=1.0) # noise term
         self.action_wrapper = ActionWrapper(self.action_space) # action wrapper 
         
         self.discount_factor = discount_factor
@@ -58,8 +58,8 @@ class DDPGAgent(AbstractAgent):
         Get policy action, add noise and map it to the correct action space.
         """
         actions =  self.get_action(state)[0] # get action from actor
-        actions = self.noise.get_action(actions, self.step)[0] # add noise term
-        actions = self.action_wrapper.wrap_action(actions) # map action to correct space
+        actions = self.noise.get_action(actions, self.step) # add noise term
+        #actions = self.action_wrapper.wrap_action(actions) # map action to correct space
         #print(actions[0])
 
         return actions # note we can have more than one action 
@@ -96,6 +96,7 @@ class DDPGAgent(AbstractAgent):
             # 2- sample random mini_batch
             state, state_, reward, action, done = self.replay_memory.sample() 
             self.nn_wrapper.train_critic(state, action, reward, state_, done, self.discount_factor)            
+            self.nn_wrapper.train_actor(state)
             # Update the target critic weights accroding to smoothing_frequency
             if total_steps % self.smoothing_frequency == 0:
                 self.nn_wrapper.update_targets(smoothing=self.use_smoothing, smoothing_factor=self.smoothing_factor)

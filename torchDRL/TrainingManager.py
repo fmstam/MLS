@@ -73,6 +73,8 @@ class TrainingManager:
                 state = self.env.reset()
                 # 3 get first action
                 action = self.agent.get_policy_action(state)
+                # this line is only for DDPG 
+                self.agent.noise.reset()
                 # 4 - iterate over the episode step unitl the agent moves to a terminal state or 
                 # the episode ends 
                 step = 1

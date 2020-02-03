@@ -22,7 +22,7 @@ import numpy as np
 # env, state and action
 
 # we can use gym environment 
-env = gym.make("Pendulum-v0") 
+env = NormalizedEnv(gym.make("Pendulum-v0"))
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.shape[0]
 action_space = np.zeros((1,2))
@@ -38,15 +38,15 @@ action_space[0,1] = env.action_space.high
 
 ####### training options to be used by the training manager #######
 num_episodes = 10000
-episode_length = 500
+episode_length = 5000
 log_file = 'scenario_name_log_file.txt'
 
 
 
 # neural nets wrapper
 device = 'gpu'
-hidden_layers_sizes = [128, 128]
-lr = [.0001, .0001] # DDPGNN expect a list of lr one for actor and another for critic
+hidden_layers_sizes = [256]
+lr = [.0001, .001] # DDPGNN expect a list of lr one for actor and another for critic
 
 ddpg_dnn_wrapper = DDPGDNN(state_size=state_size,
             action_size=len(action_space),
