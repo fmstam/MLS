@@ -17,6 +17,9 @@ from MLS.torchDRL.AbstractEnvironment import AbstractEnvironement
 
 from collections import deque # to mantian the last k rewards
 
+import matplotlib.pyplot as plt
+
+
 class TrainingManager:
     def __init__(self,
                  num_episodes,
@@ -102,3 +105,11 @@ class TrainingManager:
                 rewards.append(episode_reward)
                 average_reward = sum(rewards)/self.average_reward_steps
                 log.write(str(step)+ "\t" + str(episode_reward)+ "\t" + str(average_reward) + "\tActions list:" + str(actions_list) + "\n")
+        
+        # plot things
+        plt.plot(rewards)
+        plt.plot(average_reward)
+        plt.plot()
+        plt.xlabel('Episode')
+        plt.ylabel('Reward')
+        plt.show()
