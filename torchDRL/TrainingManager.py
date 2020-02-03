@@ -44,6 +44,8 @@ class TrainingManager:
         self.average_reward_steps = average_reward_steps
         self.log_file = log_file
 
+
+
     def run(self, verbose=False, plot=False, save_to_file=True, parallel=False):
         """ Run the RL scenario using the settings of the TrainingManager
         

@@ -244,6 +244,8 @@ class Actor(GenericDNNArch):
 
         actions = torch.tanh(x)
         return actions
+
+
 # critic DNN
 class Critic(GenericDNNArch):
     def __init__(self,
