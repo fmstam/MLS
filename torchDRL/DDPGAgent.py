@@ -57,10 +57,8 @@ class DDPGAgent(AbstractAgent):
         """
         Get policy action, add noise and map it to the correct action space.
         """
-        actions =  self.get_action(state)[0] # get action from actor
+        actions =  self.get_action(state) # get action from actor
         actions = self.noise.get_action(actions, self.step) # add noise term
-        #actions = self.action_wrapper.wrap_action(actions) # map action to correct space
-        #print(actions[0])
 
         return actions # note we can have more than one action 
 
