@@ -32,7 +32,7 @@ It is simple, see the example in `scenario.py`. You need to subclass the abstrac
  ### 7*- Deep Deterministic Policy Gradient (DDPG) (included)
  ### 5 - DQN with Prioritized Experience Replay (in progress)
  ### 6 - DQN with LSTM (queued)
- ### 7 - TD3 (queued)
+ ### 8 - TD3 (queued)
 
  
  
