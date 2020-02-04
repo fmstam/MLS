@@ -11,7 +11,7 @@ The package is composed of these main parts:
   These are used to create replay memory, neural networks, agent algorithms, .... and so on. They are all abstract so that the y can be reshaped according to the required scenario
  #### 2 - Environement class:
  This class is abstract as well, and can be reshaped to fit any environment.
- #### 3 - Training Manager classL
+ #### 3 - Training Manager class:
  This class takes care of the training task, where it handels the training style.
  #### 4- scenario file:
  A scenario file is used to define all paramaters for the core and environmenet class. As well as the training options.
