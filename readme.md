@@ -11,7 +11,7 @@ The package is composed of these main parts:
   These are used to create replay memory, neural networks, agent algorithms, .... and so on. They are all abstract so that the y can be reshaped according to the required scenario
  #### 2 - Environement class:
  This class is abstract as well, and can be reshaped to fit any environment.
- #### 3 - Training Manager classL
+ #### 3 - Training Manager class:
  This class takes care of the training task, where it handels the training style.
  #### 4- scenario file:
  A scenario file is used to define all paramaters for the core and environmenet class. As well as the training options.
@@ -29,10 +29,10 @@ It is simple, see the example in `scenario.py`. You need to subclass the abstrac
  ### 2- Double DQN (included)
  ### 3- Deuling Double DQN (included)
  ### 4- Actor-Critic (A2C) with n-steps (included)
- ### 8*- Deep Deterministic Policy Gradient (DDPG) (in progress - I priortized it for my research)
+ ### 7*- Deep Deterministic Policy Gradient (DDPG) (included)
  ### 5 - DQN with Prioritized Experience Replay (in progress)
  ### 6 - DQN with LSTM (queued)
- ### 7 - TD3 (queued)
+ ### 8 - TD3 (queued)
 
  
  
