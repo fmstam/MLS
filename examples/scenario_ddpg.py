@@ -4,7 +4,7 @@
 
 
 
-from MLS.examples.all_one.EnvEmptySlot_AC import EnvEmptySlot_AC
+from MLS.examples.EnvEmptySlot_AC import EnvEmptySlot_AC
 from MLS.torchDRL.DNN import DDPGDNN
 from MLS.torchDRL.DDPGAgent import DDPGAgent
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
@@ -18,7 +18,8 @@ import numpy as np
 
 
 
-
+# title 
+title = 'Solving Pendulum-v0 problem using DDPG algorithm'
 # env, state and action
 
 # we can use gym environment 

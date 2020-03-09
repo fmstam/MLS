@@ -1,12 +1,11 @@
+# %% main file, i.e., runner
 import sys
 sys.path.append("..")
 
-from MLS.examples.all_one import scenario_ddpg as s
-
+from MLS.examples import scenario_ddpg as s
 from MLS.torchDRL.TrainingManager import TrainingManager as TM
 
 import timeit
-
 
 
 
@@ -18,6 +17,7 @@ def main():
             s.env,
             log_file=s.log_file)
 
+    print('Scenario:%s' % s.title)
     start = timeit.default_timer()
     # let it do the magic
     tm.run(verbose=True)
@@ -31,3 +31,6 @@ def main():
 if __name__ == "__main__":
     # execute only if run as a script
    main()
+
+
+# %%
