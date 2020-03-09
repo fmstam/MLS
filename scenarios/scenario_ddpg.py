@@ -4,16 +4,16 @@
 
 
 
-from MLS.examples.EnvEmptySlot_AC import EnvEmptySlot_AC
+from MLS.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
 from MLS.torchDRL.DNN import DDPGDNN
 from MLS.torchDRL.DDPGAgent import DDPGAgent
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 from MLS.torchDRL.utl.ActionWrapper import NormalizedEnv
 
 import gym
-
-
 import numpy as np
+
+
 ###### main components of the scenario go here ######
 
 
@@ -38,7 +38,7 @@ action_space[0,1] = env.action_space.high
 
 
 ####### training options to be used by the training manager #######
-num_episodes = 200
+num_episodes = 5
 episode_length = 500
 log_file = 'scenario_name_log_file.txt'
 

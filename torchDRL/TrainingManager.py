@@ -109,7 +109,7 @@ class TrainingManager:
         # plot things
         plt.plot(rewards)
         plt.plot(average_reward)
-        plt.plot()
+        plt.xlim((1, self.num_episodes))
         plt.xlabel('Episode')
         plt.ylabel('Reward')
         plt.show()
