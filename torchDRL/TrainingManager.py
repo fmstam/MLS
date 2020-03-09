@@ -68,7 +68,8 @@ class TrainingManager:
         #assert self.agent.validate(), "Agent validation failed"
 
         # do the magic here, i.e., the main training loop
-        rewards = deque(maxlen=self.average_reward_steps)
+        last_rewards = deque(maxlen=self.average_reward_steps)
+        all_rewards = []
         total_steps = 0
         with open(self.log_file,mode='w') as log:
             for i in range(self.num_episodes): 
@@ -102,13 +103,14 @@ class TrainingManager:
                     total_steps += 1
                 if verbose:
                     print('Episode:{}\treward:{}\tsteps:{}'.format(i, episode_reward, step))
-                rewards.append(episode_reward)
-                average_reward = sum(rewards)/self.average_reward_steps
+                all_rewards.append(episode_reward)
+                last_rewards.append(episode_reward)
+                average_reward = sum(last_rewards)/self.average_reward_steps
                 log.write(str(step)+ "\t" + str(episode_reward)+ "\t" + str(average_reward) + "\tActions list:" + str(actions_list) + "\n")
         
         # plot things
-        plt.plot(rewards)
-        plt.plot(average_reward)
+        plt.plot(all_rewards)
+        #plt.plot(average_reward)
         plt.xlim((1, self.num_episodes))
         plt.xlabel('Episode')
         plt.ylabel('Reward')

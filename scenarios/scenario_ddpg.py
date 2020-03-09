@@ -38,7 +38,7 @@ action_space[0,1] = env.action_space.high
 
 
 ####### training options to be used by the training manager #######
-num_episodes = 5
+num_episodes = 10
 episode_length = 500
 log_file = 'scenario_name_log_file.txt'
 
