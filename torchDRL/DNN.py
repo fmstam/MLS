@@ -183,6 +183,7 @@ class DNNACArch(nn.Module):
                 self.device = 'cuda:0'
         
         ## models
+        
         # actor network
         # first layer
         self.a_layers = nn.ModuleList([nn.Linear(self.input_shape, self.hidden_layers_sizes[0])])

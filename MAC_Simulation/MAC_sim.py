@@ -22,7 +22,7 @@ from enum import Enum
 ####### Paramaters #######
 # sim params
 SIM_TIME = 1000 * 1e6 # 10 seoconds
-NUM_NODES = 200
+NUM_NODES = 20
 ACK_FAILURE_PROBABILITY = 0.1 # this paramater simulate the environement for ack not being recieved
                               # the higher this value the higher the packet drop rate
 
@@ -39,21 +39,25 @@ MAX_BACKOFF_TIME = 20
 MAX_BACKOFFS = 4 # before declaring failure
 BACKOFF_TIME = FRAME_LENGTH # constant used in FBE case
 
+
 # NODE params
 BUFFER_SIZE = 1000 
-MIN_PKGEN_RATE, MAX_PKGEN_RATE = 1e4, 1e5 # us   
-MIN_PK_SIZE, MAX_PK_SIZE = (0.1 * FRAME_LENGTH), FRAME_LENGTH
-
+MIN_PKGEN_RATE, MAX_PKGEN_RATE = 1e2, 1e4 # us   
+MIN_PK_SIZE, MAX_PK_SIZE = (0.05 * FRAME_LENGTH), FRAME_LENGTH
 
 # Global variables
 env = simpy.Environment() # environement
 is_channel_free = True # free
 sim_logger_file = open('logger.txt','w') # logger file with format (time, action, sub_time, node_name))
-
+colisions = 0
+transimissions = 0
+idle_slots = 0
+busy_slots = 0
 
 ############################## Classes ##########################################
 class PacketType(Enum):
-    NORMAL = 1
+    NORMAL = 1   # only this type is used for now, 
+                 # we can extend the simulator to cover the next three types
     ACK = 2
     RTS = 3
     CTS = 4
@@ -80,7 +84,7 @@ class Node:
         self.name = name
         self.NB = 0
         self.BE = MIN_BACKOFF_TIME
-        self.CCA_TIME = 8 * SYMBOL_TIME
+        self.CCA_TIME = 10 * SYMBOL_TIME
         self.buffer = deque(maxlen=BUFFER_SIZE)
         self.packet_generation_rate = random.randint(MIN_PKGEN_RATE, MAX_PKGEN_RATE)    
         self.joining_time = joining_time
@@ -98,7 +102,7 @@ class Node:
         return '(%s)\tarrived:%d\tsent:%d\tfailed:%d\t success rate:%f\tmean_arrival_time:%dus\tthroughput:%d\n' \
                % (self.name, self.arrived_packets, self.transimitted_packets, \
                   self.arrived_packets-self.transimitted_packets, self.transimitted_packets / self.arrived_packets,  \
-                  self.total_arrival_time/self.arrived_packets, self.total_arrival_time)
+                  self.total_arrival_time/self.arrived_packets, self.throughput)
 
     # callback after packet submission
     def _set_can_generate_new_packet(self, event):
@@ -111,7 +115,7 @@ class Node:
 
         if self.last_packet.sent:
             self.transimitted_packets += 1
-            self.throughput += self.last_packet.size
+            self.throughput += self.last_packet.size # it is also the COT
     
     def run(self, event=None):
         if self.can_process_new_packet:
@@ -121,10 +125,10 @@ class Node:
         """ Possiion generation rate every packet_generation_rate usecond
         """
         self.can_process_new_packet = False
-        self.processed_event = env.event()
-        self.processed_event.callbacks.append(self._set_can_generate_new_packet)
-        self.processed_event.callbacks.append(self._update_results)
-        self.processed_event.callbacks.append(self.run)
+        self.processed_event = env.event() # to handel when a packet is being processed
+        self.processed_event.callbacks.append(self._set_can_generate_new_packet) # if we can generate a new packet
+        self.processed_event.callbacks.append(self._update_results) # to update the results
+        self.processed_event.callbacks.append(self.run)             # to redo the same procedure again
 
         arrival_time = random.expovariate(1. / self.packet_generation_rate) 
         # random size in us
@@ -132,18 +136,33 @@ class Node:
         packet = DataUnit(arrival_time, size, source=self.name)
         self.buffer.append(packet)
         self.last_packet = packet
-        ### Packet arrival 
+
+        ## Packet arrival 
         # wait for the packet until its arrive time triggers
         yield env.timeout(packet.arrival_time)
         env.process(csma_ca(self, packet))
 
 ######################## Simplified unslotted CSMA_CA #############################    
+def time_slot_clock():
+    # check channel state
+    global idle_slots
+    global busy_slots
+    for _ in range(int(SIM_TIME/SLOT_LENGTH)):
+        yield env.timeout(1)
+        if is_channel_free:
+            idle_slots += 1
+        else:
+            busy_slots += 1
+
+
+
 def csma_ca(node:Node, packet:DataUnit):
     """
     Actual simplified unslotted CSMA_CA algorithm
     """
-    
     global is_channel_free
+    global colisions
+    global transimissions
     
     # reset node BN and BE
     node.NB = 0
@@ -161,14 +180,15 @@ def csma_ca(node:Node, packet:DataUnit):
         cca = 0
         cca_time_start = env.now
         while cca < node.CCA_TIME and is_channel_free == True:
+            yield env.timeout(1)
             cca += 1
         if cca > 0:
-            yield env.timeout(cca)
             print('%s:\t%dus CCA  \t%s' % (cca_time_start, cca, node.name))
             sim_logger_file.write('%s\t%s\t%s\t%s\n' % (cca_time_start, 'CCA', cca, node.name))
 
         # detect colisions    
         if cca == node.CCA_TIME and is_channel_free == False: # colision
+            colisions += 1
             print('%s"\tColision\n' % (env.now))
             sim_logger_file.write('%s\tcolision\n' % env.now)
 
@@ -185,6 +205,7 @@ def csma_ca(node:Node, packet:DataUnit):
             yield env.timeout(packet.size)
 
             # transimission finished, here we can add the ack watiting event
+            transimissions += 1
             print('%s:\tfinish_send_data \t%s' % (env.now, node.name))
             sim_logger_file.write('%s\t%s\t%s\t%s\n' % (env.now, 'finish_send_data', None, node.name))
             packet.sent = True
@@ -194,19 +215,42 @@ def csma_ca(node:Node, packet:DataUnit):
             print('%s is increasing BE and NB %s' % (node.name, env.now))
             node.NB += 1 
             node.BE += min(node.BE + 1, MAX_BACKOFF_TIME)
-    if node.NB > MAX_BACKOFFS:
+    if node.NB >= MAX_BACKOFFS:
         print('%s:\tfailed \t%s' % (env.now, node.name))
 
     # finished processing packet
     node.processed_event.succeed()
 
 
+######################## Reporting ############################    
 def after_math(nodes):
     for node in nodes:
         print(node)
         sim_logger_file.write(node.__str__())
-        
 
+
+
+def JFI(nodes):
+    n = len(nodes)
+    x = 0
+    x_squared = 0
+    for node in nodes:
+        thu = (node.transimitted_packets/node.arrived_packets)
+        #thu = node.throughput
+        x += thu
+        x_squared += pow(thu, 2)
+    jfi = pow(x, 2) /(n * x_squared) 
+
+    return jfi
+
+def mean_measures(nodes):
+    COT = list(map(lambda x:x.throughput, nodes))
+    mean_cot = sum(COT)/len(COT)
+
+    return mean_cot
+    
+
+######################## Main function #############################    
 def main():
     # simulate
     start_time = env.now
@@ -218,15 +262,26 @@ def main():
         nodes.append(node)
 
     # run the simulation
+    env.process(time_slot_clock()) # slot clock
     env.run(SIM_TIME)
 
-    # collect results
-    after_math(nodes)
+
 
     end_time = env.now    
     sim_time = end_time - start_time
-    
+
+
+
+    ## Collect results
+    after_math(nodes)
+    print('Total transimissions: %d' % transimissions)
+    print('Total colisions: %d, ratio: %4f' % (colisions, colisions/transimissions))
+    print('Total Channel (idle:%d, busy:%d, total:%d, util_ratio:%4f) slots' %(idle_slots, busy_slots, idle_slots + busy_slots, busy_slots/(idle_slots + busy_slots)))
+    print('JFI:%4f' % JFI(nodes))
+    print('Mean COT:%f' % mean_measures(nodes))
+
     print('Total simulation time: %s' % sim_time)
+
     
     sim_logger_file.close()
 
