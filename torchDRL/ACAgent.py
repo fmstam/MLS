@@ -72,7 +72,7 @@ class ACAgent(AbstractAgent):
         # unpack args
         steps, episode_step, _, state_, reward, _, done, _ = args 
 
-        # we check if we are do, so we do a learning step,
+        # we check if we should do a learning step,
         # otherwise, just store the reward and go on
 
         if done or episode_step == self.episode_length - 1:
@@ -83,7 +83,7 @@ class ACAgent(AbstractAgent):
             else: # predict the last value from the critic
                 last_value, _ = self.actor_critic.predict(state_)
 
-            # calculate the discrounted reward
+            # calculate the discounted reward
             self.rewards.append(reward)
             discounted_rewards = np.zeros(len(self.values))
             for i in reversed(range(len(self.rewards))):

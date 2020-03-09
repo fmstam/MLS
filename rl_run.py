@@ -2,12 +2,12 @@
 import sys
 sys.path.append("..")
 
-from MLS.scenarios import scenario_ddpg as s
+from MLS.scenarios import scenario_ac as s
 from MLS.torchDRL.TrainingManager import TrainingManager as TM
 
 import timeit
 
-
+ 
 
 def main():
     # define a training manager object
@@ -20,7 +20,7 @@ def main():
     print('Scenario:%s' % s.title)
     start = timeit.default_timer()
     # let it do the magic
-    tm.run(verbose=True)
+    tm.run(verbose=False)
     end = timeit.default_timer()
     print('\n It took ~{} useconds'.format(str(round(end-start))))
     

@@ -60,6 +60,9 @@ class DDPGAgent(AbstractAgent):
         actions =  self.get_action(state) # get action from actor
         actions = self.noise.get_action(actions, self.step) # add noise term
 
+        # reset noise model
+        self.noise.reset()
+
         return actions # note we can have more than one action 
 
     

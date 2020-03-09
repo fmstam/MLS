@@ -9,18 +9,16 @@
 # use this template file to create any scenario
 
 
-from MLS.examples.all_one.EnvEmptySlot_AC import EnvEmptySlot_AC
+from MLS.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
 from MLS.torchDRL.DNN import ACDNN
 from MLS.torchDRL.ACAgent import ACAgent
 import gym
 
 
 import numpy as np
+
+title = 'Scenario: CartePole-v1 using A2C n-step algorithm'
 ###### main components of the scenario go here ######
-
-
-
-
 # env, state and action
 
 # we can use gym environment 
