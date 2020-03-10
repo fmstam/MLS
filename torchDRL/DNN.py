@@ -161,6 +161,7 @@ class DNNDeulingArch(nn.Module):
         print(self)
 
 # combined actor critic DNN
+
 class DNNACArch(nn.Module):
     def __init__(self,
                  input_shape, 
