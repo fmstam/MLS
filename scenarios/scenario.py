@@ -7,16 +7,17 @@
 # use this template file to create any scenario
 
 
-from MLS.examples.all_one.EnvEmptySlot import EnvEmptySlot
+from MLS.scenarios.EnvEmptySlot import EnvEmptySlot
 from MLS.torchDRL.DNN import DQNDNN
 from MLS.torchDRL.DQNAgent import DQNAgent 
 from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
-###### main components of the scenario go here ######
 
+title = 'Scenaro: Solving empty slot problem using DQN\n'
+###### main components of the scenario go here ######
 # state and action
-state_size = 30
+state_size = 20
 action_space = [i for i in range(state_size)]
 state_type = np.int16
 action_type = np.int16
@@ -64,8 +65,8 @@ agent = DQNAgent(state_size=state_size,
                  use_double=use_double)
 
 ####### training options to be used by the training manager #######
-num_episodes = 5000
-episode_length = 2 * state_size
+num_episodes = 2000
+episode_length = 4 * state_size
 log_file = 'scenario_name_log_file.txt'
 
 
