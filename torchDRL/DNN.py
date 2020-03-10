@@ -385,7 +385,7 @@ class ACDNN:
         entropy = dist.entropy().mean()
 
         return v, dist, action.cpu().detach().item(), log_probs, entropy
-
+    
     
     def calc_loss(self,
                     discounted_r,
