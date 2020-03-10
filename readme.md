@@ -20,7 +20,8 @@ The package is composed of these main parts:
  The code in the main function is in principle the same for every RL scenario. However, this file main role is to read the scenario file and send it to the training manager to run it
  
 ## How to use it:
-It is simple, see the example in `scenario.py`. You need to subclass the abstract environement class `AbstractEnvironment`, create neural networks, using any platform you like (torch, TF, Keras, and so on), and then create an agent. That is it.
+As an example see `example.ipynb`. It has a scenario and uses the training manager to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to subclass the abstract environement class `AbstractEnvironment`, create neural networks architecture, using any platform you like (torch, TF, Keras, and so on), and then create an agent(DQN, AC, ....).
+
 
 
 
