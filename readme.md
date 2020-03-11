@@ -4,20 +4,20 @@
 Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but our own models/algorithms will be published here after the papers gets published. Currently supported algorithms:
 
 ## Implemented algorithms 
- ### 1- DQN (included)
- ### 2- Double DQN (included)
- ### 3- Deuling Double DQN (included)
- ### 4- Actor-Critic (A2C) with n-steps (included)
- ### 5- Deep Deterministic Policy Gradient (DDPG) (included)
- ### 6 - DQN with Prioritized Experience Replay (in progress)
- ### 7 - DQN with LSTM (queued)
- ### 8 - TD3 (queued)
+ #### 1- DQN (included)
+ #### 2- Double DQN (included)
+ #### 3- Deuling Double DQN (included)
+ #### 4- Actor-Critic (A2C) with n-steps (included)
+ #### 5- Deep Deterministic Policy Gradient (DDPG) (included)
+ #### 6 - DQN with Prioritized Experience Replay (in progress)
+ #### 7 - DQN with LSTM (queued)
+ #### 8 - TD3 (queued)
 
 
 Current examples of **CEOT-DRL** are implemented in **pytorch** but it should support any platform. The reason is that, the agents are implemented in a computational graph lib-agnostic way.
 
 
-##**CEOT-DRL** is composed of these main parts:
+## **CEOT-DRL** is composed of these main parts:
  
  #### 1- scenario file:
  A scenario file is used to define all parameters for the core and environment class. As well as the training options.
