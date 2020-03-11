@@ -3,7 +3,7 @@
 
 Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but our own models/algorithms will be published here after the papers gets published. Currently supported algorithms:
 
-## Implemented algorithms 
+## Implemented algorithms: 
  #### 1- DQN (included)
  #### 2- Double DQN (included)
  #### 3- Deuling Double DQN (included)

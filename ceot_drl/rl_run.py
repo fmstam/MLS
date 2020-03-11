@@ -2,8 +2,8 @@
 import sys
 sys.path.append("..")
 
-from MLS.scenarios import scenario_ddpg as s
-from MLS.torchDRL.TrainingManager import TrainingManager as TM
+from MLS.ceot_drl.scenarios import scenario_ddpg as s
+from MLS.ceot_drl.core.TrainingManager import TrainingManager as TM
 
 import timeit
 
