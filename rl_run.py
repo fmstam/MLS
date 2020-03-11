@@ -2,7 +2,6 @@
 
 import sys,os
 sys.path.append('..')
-print(os.getcwd())
 
 
 
