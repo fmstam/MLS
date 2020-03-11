@@ -1,13 +1,16 @@
 # %% main file, i.e., runner
-import sys
-sys.path.append("..")
+
+import sys,os
+sys.path.append('..')
+print(os.getcwd())
+
+
 
 from MLS.ceot_drl.scenarios import scenario_ddpg as s
 from MLS.ceot_drl.core.TrainingManager import TrainingManager as TM
 
 import timeit
 
- 
 
 def main():
     # define a training manager object

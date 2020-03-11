@@ -19,7 +19,7 @@ import numpy as np
 
 
 # title 
-title = 'Solving Pendulum-v0 problem using DDPG algorithm'
+title = ' Solving Pendulum-v0 problem using DDPG algorithm'
 # env, state and action
 
 # we can use gym environment 
