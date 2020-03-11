@@ -1,6 +1,6 @@
 # %% main file, i.e., runner
 import sys
-sys.path.append(".")
+sys.path.append("..")
 
 from MLS.ceot_drl.scenarios import scenario_ddpg as s
 from MLS.ceot_drl.core.TrainingManager import TrainingManager as TM
