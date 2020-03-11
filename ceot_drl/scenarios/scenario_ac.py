@@ -9,9 +9,9 @@
 # use this template file to create any scenario
 
 
-from MLS.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
-from MLS.torchDRL.DNN import ACDNN
-from MLS.torchDRL.ACAgent import ACAgent
+from MLS.ceot_drl.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
+from MLS.ceot_drl.core.DNN import ACDNN
+from MLS.ceot_drl.core.ACAgent import ACAgent
 import gym
 
 

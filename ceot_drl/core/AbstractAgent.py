@@ -12,7 +12,7 @@ __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
 #from abc import ABC
-from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
+from MLS.ceot_drl.core.utl.ReplayMemory import ReplayMemory
 
 class AbstractAgent():
     def __init__(self,

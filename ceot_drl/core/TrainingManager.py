@@ -12,8 +12,8 @@ __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
-from MLS.torchDRL.AbstractAgent import AbstractAgent
-from MLS.torchDRL.AbstractEnvironment import AbstractEnvironement
+from MLS.ceot_drl.core.AbstractAgent import AbstractAgent
+from MLS.ceot_drl.core.AbstractEnvironment import AbstractEnvironement
 
 from collections import deque # to mantian the last k rewards
 

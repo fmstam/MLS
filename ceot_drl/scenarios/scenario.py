@@ -7,10 +7,10 @@
 # use this template file to create any scenario
 
 
-from MLS.scenarios.EnvEmptySlot import EnvEmptySlot
-from MLS.torchDRL.DNN import DQNDNN
-from MLS.torchDRL.DQNAgent import DQNAgent 
-from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
+from MLS.ceot_drl.scenarios.EnvEmptySlot import EnvEmptySlot
+from MLS.ceot_drl.core.DNN import DQNDNN
+from MLS.ceot_drl.core.DQNAgent import DQNAgent 
+from MLS.ceot_drl.core.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
 

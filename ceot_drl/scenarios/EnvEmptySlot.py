@@ -14,7 +14,7 @@ __status__ = "Production"
 
 
 
-from MLS.torchDRL.AbstractEnvironment import AbstractEnvironement
+from MLS.ceot_drl.core.AbstractEnvironment import AbstractEnvironement
 import numpy as np
 
 class EnvEmptySlot(AbstractEnvironement):

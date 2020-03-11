@@ -16,9 +16,9 @@ __maintainer__ = "Faroq AL-Tam"
 __email__ = "ftam@ualg.pt"
 __status__ = "Production"
 
-from MLS.torchDRL.AbstractAgent import AbstractAgent
-from MLS.torchDRL.DNN import DQNDNN
-from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
+from MLS.ceot_drl.core.AbstractAgent import AbstractAgent
+from MLS.ceot_drl.core.DNN import DQNDNN
+from MLS.ceot_drl.core.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
 

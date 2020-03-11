@@ -4,11 +4,11 @@
 
 
 
-from MLS.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
-from MLS.torchDRL.DNN import DDPGDNN
-from MLS.torchDRL.DDPGAgent import DDPGAgent
-from MLS.torchDRL.utl.ReplayMemory import ReplayMemory
-from MLS.torchDRL.utl.ActionWrapper import NormalizedEnv
+from MLS.ceot_drl.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
+from MLS.ceot_drl.core.DNN import DDPGDNN
+from MLS.ceot_drl.core.DDPGAgent import DDPGAgent
+from MLS.ceot_drl.core.utl.ReplayMemory import ReplayMemory
+from MLS.ceot_drl.core.utl.ActionWrapper import NormalizedEnv
 
 import gym
 import numpy as np
