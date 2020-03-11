@@ -19,7 +19,7 @@ Current examples of **CEOT-DRL** are implemented in **pytorch** but it should su
 
 ## **CEOT-DRL** is composed of these main parts:
  
- #### 1- scenario file:
+ #### 1- Scenarios:
  A scenario file is used to define all parameters for the core and environment class. As well as the training options.
  It represents the problem, we want to solve, we feed it to a training manager, which run it and produce the results.
  
