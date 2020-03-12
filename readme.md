@@ -44,9 +44,9 @@ In addition, some parts might require optimization and at the current phase we a
 The following examples shown how to create and use scenarios to solve problems using **CEOT-DRL**.
 
 Each example has a scenario and uses the training manager `TrainingManager` to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to:
-    ..* subclass the abstract environment class `AbstractEnvironment`,
-    ..* create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
-    ..* and then use ( or create) an agent training algorithm (DQN, AC, ...).
+* subclass the abstract environment class `AbstractEnvironment`,
+* create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
+* and then use ( or create) an agent training algorithm (DQN, AC, ...).
 
 
 ### Example 1: Using Dueling DQN to solve an empty slot problem. 
