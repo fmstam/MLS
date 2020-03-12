@@ -15,13 +15,15 @@ Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but o
 
 
 Current examples of **CEOT-DRL** are implemented in **pytorch** but it should support any platform. The reason is that, the agents are implemented in a computational graph lib-agnostic way.
+In addition, some parts might require optimization and at the current phase we are taking care of that, and will publish **CEOT-DRL 1.0** soon.
 
 
 ## **CEOT-DRL** is composed of these main parts:
  
  #### 1- Scenarios:
  A scenario file is used to define all parameters for the core and environment class. As well as the training options.
- It represents the problem, we want to solve, we feed it to a training manager, which run it and produce the results.
+ It defines the problem we want to solve (the environment) and the agent we use to solve it.
+ To execute a scenario, we feed it to a training manager which runs it and produces the results. See examples bellow.
  
  #### 2- Core classes: 
   These are used to create replay memory, neural networks, agent algorithms, .... and so on. They are all abstract so that they can be reshaped according to the required scenario.
@@ -194,12 +196,4 @@ It is also possible to use another flavors of DQN algorithm, like Double DQN or 
 
     
      It took ~503 useconds
-
-
-
-
-
-
- 
- 
 
