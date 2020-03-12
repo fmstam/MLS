@@ -6,7 +6,7 @@ Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but o
 ## Implemented algorithms: 
  #### 1- DQN (included): https://arxiv.org/abs/1312.5602
  #### 2- Double DQN (included) : https://arxiv.org/abs/1509.06461
- #### 3- Deuling Double DQN (included) : https://arxiv.org/abs/1511.06581
+ #### 3- Dueling Double DQN (included) : https://arxiv.org/abs/1511.06581
  #### 4- Actor-Critic (A2C) with n-steps (included) : https://arxiv.org/abs/1602.01783
  #### 5- Deep Deterministic Policy Gradient (DDPG) (included) : https://arxiv.org/abs/1509.02971
  #### 6 - DQN with Prioritized Experience Replay (in progress): https://arxiv.org/abs/1511.05952
@@ -44,12 +44,12 @@ In addition, some parts might require optimization and at the current phase we a
 The following examples shown how to create and use scenarios to solve problems using **CEOT-DRL**.
 
 Each example has a scenario and uses the training manager `TrainingManager` to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to:
-    * subclass the abstract environment class `AbstractEnvironment`,
-    * create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
-    * and then use ( or create) an agent training algorithm (DQN, AC, ...).
+    ..* subclass the abstract environment class `AbstractEnvironment`,
+    ..* create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
+    ..* and then use ( or create) an agent training algorithm (DQN, AC, ...).
 
 
-### Example 1: Using Deuling DQN to solve an empty slot problem. 
+### Example 1: Using Dueling DQN to solve an empty slot problem. 
 
 In empty slot problem, the state is a vector of n elements (slots). Each element
 can be either 1 or 0. A slot is said to be empty if its value is 0 and occuped
