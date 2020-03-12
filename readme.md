@@ -9,9 +9,9 @@ Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but o
  #### 3- Deuling Double DQN (included) : https://arxiv.org/abs/1511.06581
  #### 4- Actor-Critic (A2C) with n-steps (included) : https://arxiv.org/abs/1602.01783
  #### 5- Deep Deterministic Policy Gradient (DDPG) (included) : https://arxiv.org/abs/1509.02971
- #### 6 - DQN with Prioritized Experience Replay (in progress)
- #### 7 - DQN with LSTM (queued)
- #### 8 - TD3 (queued)
+ #### 6 - DQN with Prioritized Experience Replay (in progress): https://arxiv.org/abs/1511.05952
+ #### 7 - DQN with LSTM, a.k.a Recurrent DQN (RDQN) (queued): https://arxiv.org/abs/1507.06527
+ #### 8 - TD3 a.k.a Fujimoto (queued): https://arxiv.org/abs/1802.09477
 
 
 Current examples of **CEOT-DRL** are implemented in **pytorch** but it should support any platform. The reason is that, the agents are implemented in a computational graph lib-agnostic way.
