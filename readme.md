@@ -99,8 +99,9 @@ positive rewarad otherwise.
     
      It took ~477 useconds
 
+It is also possible to use another flavors of DQN algorithm, like Double DQN or Deuling DQN[^1].
 
-To use another DQN agent, eg double DQN, check the scenario file.
+[^1]: "Please note that since DQN, Double DQN, and Deuling DQN differ only in the neural network architectures, we use a singel class `DQNAgent` with the same Q-learning training algorithm and feed it with different DNN architectures and other hyperparamaters regarding the DQN flavor"
 
 ### Example 2: Using AC agent to solve the carte-pole problem.
 
