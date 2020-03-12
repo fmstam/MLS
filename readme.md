@@ -41,9 +41,7 @@ In addition, some parts might require optimization and at the current phase we a
 
 
 ## Using CEOT-DRL package to solve problems with different agents
-The following examples shown how to create and use scenarios to solve problems using **CEOT-DRL**.
-
-Each example has a scenario and uses the training manager `TrainingManager` to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to:
+The following examples show how to create and use **CEOT-DRL**. Each example has a scenario and uses the training manager `TrainingManager` to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to:
 * subclass the abstract environment class `AbstractEnvironment`,
 * create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
 * and then use ( or create) an agent training algorithm (DQN, AC, ...).
