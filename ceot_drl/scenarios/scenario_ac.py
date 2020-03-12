@@ -1,13 +1,11 @@
-# here we create a sample scenario and feed it to the rl_run file
-# scenario_ac.py
-# an actor-critic agent scenario
-# we need to define 5 components for a standard DRL scenario/system:
-# state and action spaces, environement, neural networks, replay memory, and agent.
-# since this is an A2C agent, we do not use a replay memory
-# Then we need to define some training paramaters to be used in the training manager
-# that is it.
-# use this template file to create any scenario
+""" Here we create a sample scenario and feed it to the rl_run file
+scenario_ac.py an actor-critic agent scenario.
 
+We need to define 5 components for a standard DRL scenario/system:
+state and action spaces, environement, neural networks, replay memory, and agent.
+Since this is an A2C agent, we do not use a replay memory.
+
+Then we need to define some training paramaters to be used in the training manager."""
 
 from MLS.ceot_drl.scenarios.EnvEmptySlot_AC import EnvEmptySlot_AC
 from MLS.ceot_drl.core.DNN import ACDNN
@@ -17,7 +15,7 @@ import gym
 
 import numpy as np
 
-title = 'Scenario: CartePole-v1 using A2C n-step algorithm'
+title = ' CartePole-v1 using A2C n-step algorithm'
 ###### main components of the scenario go here ######
 # env, state and action
 
@@ -53,14 +51,12 @@ actor_critic = ACDNN(input_shape=state_size,
             lr=lr,
             device=device)
 
+#  memory replay: it does not have
 
-
-
-# replay memory
 
 # agent
-discount_factor = 0.99
-entropy_factor = 0.0001
+discount_factor = 0.99 # for the critic
+entropy_factor = 0.0001 # to encourage exploration 
 
 agent = ACAgent(state_size=state_size, 
                  action_space=action_space,
@@ -69,6 +65,3 @@ agent = ACAgent(state_size=state_size,
                  entropy_factor=entropy_factor,
                  episode_length=episode_length 
                  )
-
-
-

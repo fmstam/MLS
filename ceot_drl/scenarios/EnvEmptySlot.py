@@ -1,7 +1,7 @@
-#!/usr/bin/env python
 """ 
     A simple environement.
-    Given a binary array of length n, if the agent select empty slots then it receive 1, and 0 otherwiese.
+    Given a binary array of length n, if the agent select empty slots then it receives 1,
+    and 0 otherwiese.
 """
 __author__ = "AL-Tam Faroq"
 __copyright__ = "Copyright 2020, UALG"

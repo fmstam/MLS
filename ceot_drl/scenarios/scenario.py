@@ -1,10 +1,12 @@
-# here we create a sample scenario and feed it to the rl_run file
-# scenario.py
-# we need to define 5 components for a standard DRL scenario/system:
-# state and action spaces, environement, neural networks, replay memory, and agent.
-# Then we need to define some training paramaters to be used in the training manager
-# that is it.
-# use this template file to create any scenario
+""" Here we create a sample scenario and feed it to the run file.
+We need to define 5 components for a standard DRL scenario/system:
+state and action spaces, environement, neural networks, replay memory, and agent.
+Then we need to define some training paramaters to be used in the training manager
+that is it.
+
+NOTE: you can use this template file to create any scenario
+"""
+
 
 
 from MLS.ceot_drl.scenarios.EnvEmptySlot import EnvEmptySlot
@@ -14,8 +16,9 @@ from MLS.ceot_drl.core.utl.ReplayMemory import ReplayMemory
 
 import numpy as np
 
-title = 'Scenaro: Solving empty slot problem using DQN\n'
 ###### main components of the scenario go here ######
+title = 'Scenaro: Solving empty slot problem using DQN\n'
+
 # state and action
 state_size = 20
 action_space = [i for i in range(state_size)]
@@ -41,7 +44,8 @@ target_critic = DQNDNN(input_shape=state_size,
             hidden_layers_sizes=hidden_layers_sizes,
             device=device)
 
-critic.summary()
+# to print the network architecture use
+# critic.summary()
 
 # replay memory
 replay_memory = ReplayMemory(state_type=state_type,

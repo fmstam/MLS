@@ -1,6 +1,6 @@
-# here we create a sample scenario and feed it to the rl_run file
-# scenario_ddpg.py
-# Here we assume that the action stpace is continouse with low and high limits
+""" Here we create a sample scenario and feed it to the run file.
+ We assume that the action space is continouse with low and high limits.
+ """
 
 
 
@@ -17,12 +17,13 @@ import numpy as np
 ###### main components of the scenario go here ######
 
 
-
 # title 
-title = ' Solving Pendulum-v0 problem using DDPG algorithm'
+title = 'Solving Pendulum-v0 problem using DDPG algorithm'
+
+
 # env, state and action
 
-# we can use gym environment 
+## we can use gym environment 
 env = NormalizedEnv(gym.make("Pendulum-v0"))
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.shape[0]
@@ -30,7 +31,7 @@ action_space = np.zeros((1,2))
 action_space[0,0] = env.action_space.low
 action_space[0,1] = env.action_space.high
 
-# or our simplified environement class
+## or our simplified environement class
 # env = EnvEmptySlot_AC(state_size=15)
 # state_size = env.state_size
 # action_space = env.action_space
@@ -43,7 +44,6 @@ episode_length = 500
 log_file = 'scenario_name_log_file.txt'
 
 
-
 # neural nets wrapper
 device = 'gpu'
 hidden_layers_sizes = [256]
@@ -54,8 +54,6 @@ ddpg_dnn_wrapper = DDPGDNN(state_size=state_size,
             hidden_layers_sizes=hidden_layers_sizes,
             device=device,
             lr=lr)
-
-
 
 
 # replay memory

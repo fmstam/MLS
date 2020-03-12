@@ -1,5 +1,8 @@
 # %% main file, i.e., runner
-
+"""
+This file is the entry point for running any scenario.
+It requires two things: a scenario file and the training manager.
+"""
 import sys,os
 sys.path.append('..')
 
