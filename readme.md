@@ -55,7 +55,7 @@ In empty slot problem, the state is a vector of n elements (slots). Each element
 can be either 1 or 0. A slot is said to be empty if its value is 0 and occuped
 if it is 1. The agent will try to place 1s in the empty slots. If it places 1 in
 a slot that is already contains 1, then it recieves a negative rewarad, and
-positive rewarad otherwise.
+positive rewarad otherwise. To learn more about this simple problem, see `EnvEmptySlot.py`.
 
 ```python
     import sys
