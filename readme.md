@@ -55,7 +55,7 @@ if it is 1. The agent will try to place 1s in the empty slots. If it places 1 in
 a slot that is already contains 1, then it recieves a negative rewarad, and
 positive rewarad otherwise.
 
-
+```python
     import sys
     sys.path.append("..")
     
@@ -86,7 +86,7 @@ positive rewarad otherwise.
     if __name__ == "__main__":
         # execute only if run as a script
        main()
-    
+``` 
 
     Scenario: Solving empty slot problem using DQN
     
@@ -104,7 +104,7 @@ It is also possible to use another flavors of DQN algorithm, like Double DQN or 
 
 ### Example 2: Using AC agent to solve the carte-pole problem.
 
-
+```python
     import sys
     sys.path.append("..")
     
@@ -135,7 +135,7 @@ It is also possible to use another flavors of DQN algorithm, like Double DQN or 
     if __name__ == "__main__":
         # execute only if run as a script
        main()
-    
+```
 
 
     Scenario: CartePole-v1 using A2C n-step algorithm
@@ -151,7 +151,7 @@ It is also possible to use another flavors of DQN algorithm, like Double DQN or 
 
 ### Example 3: Using DDPG agent to solve the Pendulum-v0 problem
 
-
+```python
     import sys
     sys.path.append("..")
     
@@ -177,12 +177,12 @@ It is also possible to use another flavors of DQN algorithm, like Double DQN or 
         end = timeit.default_timer()
         print('\n It took ~{} useconds'.format(str(round(end-start))))
         
-    
+
     
     if __name__ == "__main__":
         # execute only if run as a script
        main()
-    
+```  
 
 
     Scenario: Solving Pendulum-v0 problem using DDPG algorithm
