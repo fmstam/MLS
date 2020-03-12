@@ -36,8 +36,166 @@ Current examples of **CEOT-DRL** are implemented in **pytorch** but it should su
  #### 5- run file:
  This file main role is to read the scenario file and send it to the training manager to run it.
  
-## How to use it:
-As an example see `example.ipynb`. It has a scenario and uses the training manager to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to subclass the abstract environment class `AbstractEnvironment`, create neural networks architecture, using any platform you like (torch, TF, Keras, and so on), and then create an agent(DQN, AC, ....).
+
+
+## Using CEOT-DRL package to solve problems with different agents
+The following examples shown how to create and use scenarios to solve problems using **CEOT-DRL**.
+
+Each example has a scenario and uses the training manager `TrainingManager` to execute the scenario. For a scenario example see `scenario.py`. To create your own scenario, you need to:
+    * subclass the abstract environment class `AbstractEnvironment`,
+    * create neural networks architecture (see `DDN.py` file for different architectures in **Pytorch**), using any platform you like (torch, TF, Keras, and so on), 
+    * and then use ( or create) an agent training algorithm (DQN, AC, ...).
+
+
+### Example 1: Using Deuling DQN to solve an empty slot problem. 
+
+In empty slot problem, the state is a vector of n elements (slots). Each element
+can be either 1 or 0. A slot is said to be empty if its value is 0 and occuped
+if it is 1. The agent will try to place 1s in the empty slots. If it places 1 in
+a slot that is already contains 1, then it recieves a negative rewarad, and
+positive rewarad otherwise.
+
+
+    import sys
+    sys.path.append("..")
+    
+    from MLS.scenarios import scenario as s
+    from MLS.torchDRL.TrainingManager import TrainingManager as TM
+    
+    import timeit
+    
+     
+    
+    def main():
+        # define a training manager object
+        tm = TM(s.num_episodes, 
+                s.episode_length, 
+                s.agent,
+                s.env,
+                log_file=s.log_file)
+    
+        print('Scenario:%s' % s.title)
+        start = timeit.default_timer()
+        # let it do the magic
+        tm.run(verbose=False)
+        end = timeit.default_timer()
+        print('\n It took ~{} useconds'.format(str(round(end-start))))
+        
+    
+    
+    if __name__ == "__main__":
+        # execute only if run as a script
+       main()
+    
+
+    Scenario:Scenaro: Solving empty slot problem using DQN
+    
+
+
+
+![svg](example_files/example_3_1.svg)
+
+
+    
+     It took ~477 useconds
+
+
+To use another DQN agent, eg double DQN, check the scenario file.
+
+### Example 2: Using AC agent to solve the carte-pole problem.
+
+
+    import sys
+    sys.path.append("..")
+    
+    from MLS.scenarios import scenario_ac as s
+    from MLS.torchDRL.TrainingManager import TrainingManager as TM
+    
+    import timeit
+    
+     
+    
+    def main():
+        # define a training manager object
+        tm = TM(s.num_episodes, 
+                s.episode_length, 
+                s.agent,
+                s.env,
+                log_file=s.log_file)
+    
+        print('Scenario:%s' % s.title)
+        start = timeit.default_timer()
+        # let it do the magic
+        tm.run(verbose=False)
+        end = timeit.default_timer()
+        print('\n It took ~{} useconds'.format(str(round(end-start))))
+        
+    
+    
+    if __name__ == "__main__":
+        # execute only if run as a script
+       main()
+    
+
+
+    Scenario:Scenario: CartePole-v1 using A2C n-step algorithm
+
+
+
+![svg](example_files/example_6_1.svg)
+
+
+    
+     It took ~280 useconds
+
+
+### Example 3: Using DDPG agent to solve the Pendulum-v0 problem
+
+
+    import sys
+    sys.path.append("..")
+    
+    from MLS.scenarios import scenario_ddpg as s
+    from MLS.torchDRL.TrainingManager import TrainingManager as TM
+    
+    import timeit
+    
+     
+    
+    def main():
+        # define a training manager object
+        tm = TM(s.num_episodes, 
+                s.episode_length, 
+                s.agent,
+                s.env,
+                log_file=s.log_file)
+    
+        print('Scenario:%s' % s.title)
+        start = timeit.default_timer()
+        # let it do the magic
+        tm.run(verbose=False)
+        end = timeit.default_timer()
+        print('\n It took ~{} useconds'.format(str(round(end-start))))
+        
+    
+    
+    if __name__ == "__main__":
+        # execute only if run as a script
+       main()
+    
+
+
+    Scenario:Solving Pendulum-v0 problem using DDPG algorithm
+
+
+
+![svg](example_files/example_8_1.svg)
+
+
+    
+     It took ~503 useconds
+
+
 
 
 
