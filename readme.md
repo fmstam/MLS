@@ -88,7 +88,7 @@ positive rewarad otherwise.
        main()
     
 
-    Scenario:Scenaro: Solving empty slot problem using DQN
+    Scenario: Solving empty slot problem using DQN
     
 
 
@@ -138,7 +138,7 @@ To use another DQN agent, eg double DQN, check the scenario file.
     
 
 
-    Scenario:Scenario: CartePole-v1 using A2C n-step algorithm
+    Scenario: CartePole-v1 using A2C n-step algorithm
 
 
 
@@ -185,7 +185,7 @@ To use another DQN agent, eg double DQN, check the scenario file.
     
 
 
-    Scenario:Solving Pendulum-v0 problem using DDPG algorithm
+    Scenario: Solving Pendulum-v0 problem using DDPG algorithm
 
 
 
