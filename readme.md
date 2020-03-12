@@ -4,11 +4,11 @@
 Published version of **CEOT-DRL** 0.1 supports only common DRL algorithms, but our own models/algorithms will be published here after the papers gets published. Currently supported algorithms:
 
 ## Implemented algorithms: 
- #### 1- DQN (included)
- #### 2- Double DQN (included)
- #### 3- Deuling Double DQN (included)
- #### 4- Actor-Critic (A2C) with n-steps (included)
- #### 5- Deep Deterministic Policy Gradient (DDPG) (included)
+ #### 1- DQN (included): https://arxiv.org/abs/1312.5602
+ #### 2- Double DQN (included) : https://arxiv.org/abs/1509.06461
+ #### 3- Deuling Double DQN (included) : https://arxiv.org/abs/1511.06581
+ #### 4- Actor-Critic (A2C) with n-steps (included) : https://arxiv.org/abs/1602.01783
+ #### 5- Deep Deterministic Policy Gradient (DDPG) (included) : https://arxiv.org/abs/1509.02971
  #### 6 - DQN with Prioritized Experience Replay (in progress)
  #### 7 - DQN with LSTM (queued)
  #### 8 - TD3 (queued)
