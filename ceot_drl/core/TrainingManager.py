@@ -1,6 +1,5 @@
 """ 
-    Training Manager. It takes an agent, environement and run the scenario for a set of episodes.
-    It show online learning  curve
+    Training Manager. It takes an agent, environement and runs the scenario for a set of episodes.
 """
 __author__ = "AL-Tam Faroq"
 __copyright__ = "Copyright 2020, UALG"

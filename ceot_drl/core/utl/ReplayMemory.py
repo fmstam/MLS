@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     An experience reply memory class used in many DLR models. 
     It is impelemented as a cyclic queue and is used manily for min-batch sampling
