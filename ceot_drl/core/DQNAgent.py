@@ -6,14 +6,6 @@
     In addition, this class can easily carry out the Deuling DQN. What we need to change 
     is the DNN, in another class, see class DQNDNN in DNN.py.
 """
-__author__ = "AL-Tam Faroq"
-__copyright__ = "Copyright 2020, UALG"
-__credits__ = ["Faroq AL-Tam"]
-__license__ = "GPL"
-__version__ = "1.0.1"
-__maintainer__ = "Faroq AL-Tam"
-__email__ = "ftam@ualg.pt"
-__status__ = "Production"
 
 from MLS.ceot_drl.core.AbstractAgent import AbstractAgent
 from MLS.ceot_drl.core.DNN import DQNDNN
