@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     Implementaion of Deep Q network algorithm
     This class implements both DQN and Double DQN

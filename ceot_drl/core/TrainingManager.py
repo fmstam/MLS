@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     Training Manager. It takes an agent, environement and run the scenario for a set of episodes.
     It show online learning  curve

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # %% main file, i.e., runner
 """
 This file is the entry point for running any scenario.

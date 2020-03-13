@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     Implementaion of Actor-critic algorithm
 """

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     Implementaion of Deep Determinist Policy Gradient agent. 
     This class heavely uses the DDPGDNN in the DNN file. 

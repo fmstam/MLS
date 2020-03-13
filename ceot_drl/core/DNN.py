@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """ 
     Deep Neural Network class using torch.nn
 """
