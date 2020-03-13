@@ -49,7 +49,7 @@ class ACAgent(AbstractAgent):
         return action
     
     def learn(self, *args):
-        """ The actual algorithm of DQN goes here
+        """ The actual algorithm of A2C goes here
         
         Keyword arguments:
         *arg -- an experience sequence sent from the episode manageer. It should be unpacked to with this order: 
